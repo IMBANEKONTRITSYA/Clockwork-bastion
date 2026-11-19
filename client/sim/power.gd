@@ -20,10 +20,10 @@ static func is_clockwise_cell(x: int, y: int, reversed: bool) -> bool:
 
 
 ## Коэффициент мощности k ×1000.
-static func power_factor(power: int, load: int) -> int:
-	if load <= 0:
+static func power_factor(power: int, gear_load: int) -> int:
+	if gear_load <= 0:
 		return Fixed.ONE
-	return mini(Fixed.ONE, power * Fixed.ONE / load)
+	return mini(Fixed.ONE, power * Fixed.ONE / gear_load)
 
 
 ## Пересчитывает подключение, направление и rpm всех шестерней. Возвращает нагрузку L.
@@ -34,8 +34,8 @@ static func recompute(
 		g.connected = false
 		g.clockwise = is_clockwise_cell(g.x, g.y, reversed)
 		g.rpm_x1000 = 0
-	var load: int = _mark_connected(grid)
-	var k: int = power_factor(power, load)
+	var gear_load: int = _mark_connected(grid)
+	var k: int = power_factor(power, gear_load)
 	var heart_rpm: int = data.run_value("heart_rpm")
 	for g: SimGear in grid.gears:
 		if not g.connected:
@@ -44,7 +44,7 @@ static func recompute(
 		rpm = rpm * data.level_size(g.level) / Fixed.ONE
 		rpm = rpm * (Fixed.ONE + bonus_x1000) / Fixed.ONE
 		g.rpm_x1000 = rpm
-	return load
+	return gear_load
 
 
 static func _mark_connected(grid: SimGrid) -> int:

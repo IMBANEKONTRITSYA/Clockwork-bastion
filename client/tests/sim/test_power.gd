@@ -31,8 +31,8 @@ func test_reverse_flips_every_cell() -> void:
 
 func test_chain_from_heart_is_connected_with_alternating_directions() -> void:
 	var grid: SimGrid = _grid_with([Vector2i(3, 3), Vector2i(3, 2), Vector2i(3, 1)])
-	var load: int = PowerSystem.recompute(grid, _data, 8, false)
-	assert_eq(load, 3)
+	var gear_load: int = PowerSystem.recompute(grid, _data, 8, false)
+	assert_eq(gear_load, 3)
 	assert_true(grid.gear_at(3, 3).connected)
 	assert_false(grid.gear_at(3, 3).clockwise)
 	assert_true(grid.gear_at(3, 2).clockwise)
@@ -41,8 +41,8 @@ func test_chain_from_heart_is_connected_with_alternating_directions() -> void:
 
 func test_gap_disconnects_the_rest() -> void:
 	var grid: SimGrid = _grid_with([Vector2i(3, 3), Vector2i(3, 1), Vector2i(3, 0)])
-	var load: int = PowerSystem.recompute(grid, _data, 8, false)
-	assert_eq(load, 1)
+	var gear_load: int = PowerSystem.recompute(grid, _data, 8, false)
+	assert_eq(gear_load, 1)
 	assert_false(grid.gear_at(3, 1).connected)
 	assert_eq(grid.gear_at(3, 1).rpm_x1000, 0)
 	assert_false(grid.gear_at(3, 0).connected)
@@ -73,8 +73,8 @@ func test_overload_slows_proportionally() -> void:
 	cells.append(Vector2i(4, 4))
 	cells.append(Vector2i(3, 2))
 	var grid: SimGrid = _grid_with(cells)
-	var load: int = PowerSystem.recompute(grid, _data, 8, false)
-	assert_eq(load, 10)
+	var gear_load: int = PowerSystem.recompute(grid, _data, 8, false)
+	assert_eq(gear_load, 10)
 	assert_eq(PowerSystem.power_factor(8, 10), 800)
 	assert_eq(grid.gear_at(0, 3).rpm_x1000, 48000)
 
