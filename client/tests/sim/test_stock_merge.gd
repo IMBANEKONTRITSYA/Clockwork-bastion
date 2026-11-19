@@ -19,7 +19,7 @@ func test_run_starts_with_two_gears_and_ten_nuts() -> void:
 	var sim: BattleSim = SimTestHelpers.new_sim()
 	assert_eq(sim.stock.size(), 2)
 	assert_eq(sim.nuts, 10)
-	assert_eq(sim.price, 6)
+	assert_eq(sim.price, 8)
 
 
 func test_no_gears_arrive_by_themselves() -> void:
@@ -33,8 +33,8 @@ func test_buy_spends_price_raises_it_and_adds_1_to_3_gears() -> void:
 	var sim: BattleSim = SimTestHelpers.new_sim()
 	_set_stock(sim, [])
 	assert_true(sim.apply_input("buy", {}))
-	assert_eq(sim.nuts, 4)
-	assert_eq(sim.price, 8)
+	assert_eq(sim.nuts, 2)
+	assert_eq(sim.price, 12)
 	assert_between(sim.last_buy_count, 1, 3)
 	assert_eq(sim.stock.size(), sim.last_buy_count)
 

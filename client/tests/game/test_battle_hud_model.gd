@@ -14,7 +14,7 @@ func test_start_of_run_shows_pause_with_15_seconds() -> void:
 	assert_eq(m.wall_max, 100)
 	assert_eq(m.waves_total, 10)
 	assert_eq(m.reverse_ready, 1000)
-	assert_eq(m.price, 6)
+	assert_eq(m.price, 8)
 	assert_true(m.can_buy)
 
 

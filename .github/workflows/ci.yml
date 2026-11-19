@@ -55,7 +55,6 @@ jobs:
         if: always()
         run: |
           make fixtures SEEDS=101 GODOT=~/godot/godot
-          make sim RUNS=100 GODOT=~/godot/godot VARIANTS="buy_price_step=2|buy_price_base=8,buy_price_step=4|buy_price_base=10,buy_price_step=6|buy_price_base=12,buy_price_step=8,start_nuts=8"
 
   server:
     runs-on: ubuntu-latest

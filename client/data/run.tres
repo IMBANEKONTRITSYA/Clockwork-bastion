@@ -41,10 +41,10 @@ rows = [{
 "value": 10
 }, {
 "id": "buy_price_base",
-"value": 6
+"value": 8
 }, {
 "id": "buy_price_step",
-"value": 2
+"value": 4
 }, {
 "id": "buy_count_1_permille",
 "value": 500
