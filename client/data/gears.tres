@@ -5,11 +5,45 @@
 [resource]
 script = ExtResource("1_table")
 table_name = "gears"
-columns = PackedStringArray("id", "element", "base_damage", "hits_per_rev_x1000", "pierce")
+columns = PackedStringArray("id", "element", "base_damage", "hits_per_rev_x1000", "conveyor_weight", "cw_range_x1000", "cw_reach_x1000", "cw_targets", "cw_dmg_pct", "cw_knockback_x1000", "cw_slow_pct", "cw_slow_ticks", "ccw_range_x1000", "ccw_reach_x1000", "ccw_targets", "ccw_dmg_pct", "ccw_knockback_x1000", "ccw_slow_pct", "ccw_slow_ticks")
 rows = [{
 "id": "saw",
 "element": "steel",
 "base_damage": 10,
 "hits_per_rev_x1000": 1000,
-"pierce": 3
+"conveyor_weight": 1,
+"cw_range_x1000": 12000,
+"cw_reach_x1000": 500,
+"cw_targets": 3,
+"cw_dmg_pct": 1000,
+"cw_knockback_x1000": 0,
+"cw_slow_pct": 0,
+"cw_slow_ticks": 0,
+"ccw_range_x1000": 2000,
+"ccw_reach_x1000": 1500,
+"ccw_targets": 99,
+"ccw_dmg_pct": 1000,
+"ccw_knockback_x1000": 0,
+"ccw_slow_pct": 0,
+"ccw_slow_ticks": 0
+}, {
+"id": "steam",
+"element": "flame",
+"base_damage": 3,
+"hits_per_rev_x1000": 4000,
+"conveyor_weight": 1,
+"cw_range_x1000": 4000,
+"cw_reach_x1000": 1500,
+"cw_targets": 99,
+"cw_dmg_pct": 1000,
+"cw_knockback_x1000": 300,
+"cw_slow_pct": 0,
+"cw_slow_ticks": 0,
+"ccw_range_x1000": 5000,
+"ccw_reach_x1000": 1500,
+"ccw_targets": 99,
+"ccw_dmg_pct": 500,
+"ccw_knockback_x1000": 0,
+"ccw_slow_pct": 350,
+"ccw_slow_ticks": 60
 }]

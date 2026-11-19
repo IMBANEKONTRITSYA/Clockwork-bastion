@@ -1,0 +1,21 @@
+# Параметры забега. Время — в тиках (30 тиков = 1 с), дробные — ×1000. core-rules §3, §5, §6.
+id,value
+ticks_per_second,30
+heart_power,8
+heart_rpm,60
+wall_hp,100
+spinup_ticks,60
+reverse_stop_ticks,45
+reverse_cooldown_ticks,600
+conveyor_interval_ticks,150
+conveyor_slots,3
+conveyor_start_items,2
+conveyor_overflow_nuts,1
+max_gear_level,5
+wave_budget_base,10
+wave_budget_per_wave,4
+wave_pause_ticks,450
+wave_spawn_interval_ticks,20
+waves_total,10
+field_length_x1000,12000
+monster_attack_interval_ticks,30

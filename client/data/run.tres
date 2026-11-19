@@ -1,0 +1,66 @@
+[gd_resource type="Resource" script_class="BalanceTable" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://sim/balance_table.gd" id="1_table"]
+
+[resource]
+script = ExtResource("1_table")
+table_name = "run"
+columns = PackedStringArray("id", "value")
+rows = [{
+"id": "ticks_per_second",
+"value": 30
+}, {
+"id": "heart_power",
+"value": 8
+}, {
+"id": "heart_rpm",
+"value": 60
+}, {
+"id": "wall_hp",
+"value": 100
+}, {
+"id": "spinup_ticks",
+"value": 60
+}, {
+"id": "reverse_stop_ticks",
+"value": 45
+}, {
+"id": "reverse_cooldown_ticks",
+"value": 600
+}, {
+"id": "conveyor_interval_ticks",
+"value": 150
+}, {
+"id": "conveyor_slots",
+"value": 3
+}, {
+"id": "conveyor_start_items",
+"value": 2
+}, {
+"id": "conveyor_overflow_nuts",
+"value": 1
+}, {
+"id": "max_gear_level",
+"value": 5
+}, {
+"id": "wave_budget_base",
+"value": 10
+}, {
+"id": "wave_budget_per_wave",
+"value": 4
+}, {
+"id": "wave_pause_ticks",
+"value": 450
+}, {
+"id": "wave_spawn_interval_ticks",
+"value": 20
+}, {
+"id": "waves_total",
+"value": 10
+}, {
+"id": "field_length_x1000",
+"value": 12000
+}, {
+"id": "monster_attack_interval_ticks",
+"value": 30
+}]
