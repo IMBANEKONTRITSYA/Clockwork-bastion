@@ -9,6 +9,11 @@ if git rev-parse --git-dir >/dev/null 2>&1; then
   echo "- Последние коммиты:"
   git log --oneline -5 2>/dev/null | sed 's/^/  - /'
 fi
+# Текущее состояние из HANDOFF.md: только таблица «Сейчас в работе»
+if [ -f HANDOFF.md ]; then
+  echo "## Сейчас в работе (из HANDOFF.md)"
+  awk '/^## Сейчас в работе/{f=1;next} /^## /{f=0} f && /^\|/' HANDOFF.md | head -n 10
+fi
 # Активный план: первый по номеру план в docs/plans/ с незакрытыми пунктами (кроме README)
 latest_plan=""
 for f in $(ls docs/plans/[0-9]*.md 2>/dev/null | sort); do
