@@ -25,15 +25,17 @@ func test_slow_reduces_speed_and_expires() -> void:
 	assert_eq(m.slow_pct, 0)
 
 
-func test_monster_reaching_wall_hits_it_and_keeps_hitting_every_30_ticks() -> void:
+func test_monster_reaching_wall_hits_it_once_and_leaves_without_reward() -> void:
 	var sim: BattleSim = _wave_sim()
 	SimTestHelpers.put_monster(sim, "rustling", 3000, 20)
+	SimTestHelpers.put_monster(sim, "rustling", 3000, 9000)
 	sim.advance()
 	assert_eq(sim.wall, 95)
-	SimTestHelpers.run_ticks(sim, 29)
+	assert_eq(sim.monsters.size(), 1)
+	assert_eq(sim.kills, 0)
+	assert_eq(sim.nuts, 0)
+	SimTestHelpers.run_ticks(sim, 30)
 	assert_eq(sim.wall, 95)
-	sim.advance()
-	assert_eq(sim.wall, 90)
 
 
 func test_wall_at_zero_loses_run() -> void:

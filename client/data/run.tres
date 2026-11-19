@@ -60,7 +60,4 @@ rows = [{
 }, {
 "id": "field_length_x1000",
 "value": 12000
-}, {
-"id": "monster_attack_interval_ticks",
-"value": 30
 }]

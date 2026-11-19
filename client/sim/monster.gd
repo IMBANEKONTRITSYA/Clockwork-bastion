@@ -13,12 +13,12 @@ var base_x: int = 0
 var age: int = 0
 var slow_pct: int = 0
 var slow_ticks: int = 0
-var at_wall: bool = false
-var attack_timer: int = 0
+## Дошёл до Стены и ударил её: убирается без гаек и без убийства.
+var breached: bool = false
 
 
 func is_alive() -> bool:
-	return hp > 0
+	return hp > 0 and not breached
 
 
 ## Сдвиг зигзага по треугольной волне: от -amp до +amp за период.

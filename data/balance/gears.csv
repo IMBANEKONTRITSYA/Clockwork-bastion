@@ -3,5 +3,5 @@
 # targets — сколько целей бьёт удар, dmg_pct — доля урона, knockback — отброс от Стены, slow_pct/slow_ticks — замедление.
 # conveyor_weight — вес выпадения на конвейере (0 = не выпадает).
 id,element,base_damage,hits_per_rev_x1000,conveyor_weight,cw_range_x1000,cw_reach_x1000,cw_targets,cw_dmg_pct,cw_knockback_x1000,cw_slow_pct,cw_slow_ticks,ccw_range_x1000,ccw_reach_x1000,ccw_targets,ccw_dmg_pct,ccw_knockback_x1000,ccw_slow_pct,ccw_slow_ticks
-saw,steel,10,1000,1,12000,500,3,1000,0,0,0,2000,1500,99,1000,0,0,0
-steam,flame,3,4000,1,4000,1500,99,1000,300,0,0,5000,1500,99,500,0,350,60
+saw,steel,10,1000,1,12000,6000,3,1000,0,0,0,2500,6000,99,1000,0,0,0
+steam,flame,3,4000,1,4000,2500,99,1000,300,0,0,5000,2500,99,500,0,350,60

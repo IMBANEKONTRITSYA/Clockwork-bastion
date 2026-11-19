@@ -161,8 +161,9 @@ func state_hash() -> String:
 	for m: SimMonster in monsters:
 		h.add_int(m.id)
 		h.add_string(m.type)
-		for v: int in [m.hp, m.x, m.y, m.age, m.slow_pct, m.slow_ticks, m.attack_timer]:
+		for v: int in [m.hp, m.x, m.y, m.age, m.slow_pct, m.slow_ticks]:
 			h.add_int(v)
+		h.add_bool(m.breached)
 	for item: ConveyorItem in conveyor:
 		h.add_string(item.type)
 		h.add_int(item.level)
@@ -299,19 +300,14 @@ static func _closer_to_wall(a: SimMonster, b: SimMonster) -> bool:
 
 func _step_monsters() -> void:
 	var tps: int = data.run_value("ticks_per_second")
-	var attack_interval: int = data.run_value("monster_attack_interval_ticks")
 	for m: SimMonster in monsters:
+		if not m.is_alive():
+			continue
 		var spec: SimSpecs.Monster = data.monster(m.type)
 		if m.slow_ticks > 0:
 			m.slow_ticks -= 1
 			if m.slow_ticks == 0:
 				m.slow_pct = 0
-		if m.at_wall:
-			m.attack_timer -= 1
-			if m.attack_timer <= 0:
-				wall -= spec.wall_damage
-				m.attack_timer = attack_interval
-			continue
 		m.age += 1
 		var speed: int = spec.speed_x1000 * (Fixed.ONE - m.slow_pct) / Fixed.ONE
 		m.y -= speed / tps
@@ -321,9 +317,8 @@ func _step_monsters() -> void:
 		m.x = Fixed.clamp_int(m.base_x + offset, 0, FIELD_LANES_X1000)
 		if m.y <= 0:
 			m.y = 0
-			m.at_wall = true
+			m.breached = true
 			wall -= spec.wall_damage
-			m.attack_timer = attack_interval
 	if wall <= 0:
 		wall = 0
 		phase = Phase.LOST
@@ -338,7 +333,6 @@ func _apply_hits() -> void:
 		m.hp -= hit.damage
 		if hit.knockback > 0:
 			m.y = mini(field_length, m.y + hit.knockback)
-			m.at_wall = false
 		if hit.slow_pct > m.slow_pct:
 			m.slow_pct = hit.slow_pct
 		if hit.slow_ticks > m.slow_ticks:
@@ -348,7 +342,7 @@ func _apply_hits() -> void:
 	for m: SimMonster in monsters:
 		if m.is_alive():
 			alive.append(m)
-		else:
+		elif not m.breached:
 			kills += 1
 			nuts += data.monster(m.type).nuts
 	monsters = alive

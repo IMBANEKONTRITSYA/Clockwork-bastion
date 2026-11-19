@@ -18,4 +18,3 @@ wave_pause_ticks,450
 wave_spawn_interval_ticks,20
 waves_total,10
 field_length_x1000,12000
-monster_attack_interval_ticks,30

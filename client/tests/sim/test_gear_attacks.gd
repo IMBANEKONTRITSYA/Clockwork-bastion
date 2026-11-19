@@ -34,22 +34,34 @@ func test_gears_do_not_attack_during_pause() -> void:
 	assert_eq(sim.attacks, 0)
 
 
-func test_saw_counterclockwise_line_hits_three_nearest_in_its_column() -> void:
-	# (3,3) крутится ↺ — «Отдача»: диск у Стены (дальность 2000, полуширина 1500).
+func test_saw_counterclockwise_disk_hits_everyone_near_wall() -> void:
+	# (3,3) крутится ↺ — «Отдача»: диск у Стены (дальность 2500, всё поле по ширине).
 	var sim: BattleSim = SimTestHelpers.new_sim()
 	var g: SimGear = SimTestHelpers.put_gear(sim, "saw", 1, 3, 3)
 	sim.advance()
 	assert_false(g.clockwise)
 	var near: SimMonster = SimTestHelpers.put_monster(sim, "rustling", 3000, 1000)
-	var side: SimMonster = SimTestHelpers.put_monster(sim, "rustling", 4500, 500)
-	var far: SimMonster = SimTestHelpers.put_monster(sim, "rustling", 3000, 5000)
-	var out: SimMonster = SimTestHelpers.put_monster(sim, "rustling", 5000, 500)
+	var edge: SimMonster = SimTestHelpers.put_monster(sim, "rustling", 6000, 2500)
+	var corner: SimMonster = SimTestHelpers.put_monster(sim, "rustling", 0, 100)
+	var far: SimMonster = SimTestHelpers.put_monster(sim, "rustling", 3000, 2600)
 	sim.call("_attack", g, sim.data.gear("saw"))
 	sim.call("_apply_hits")
 	assert_eq(near.hp, 1_000_000 - 10_000)
-	assert_eq(side.hp, 1_000_000 - 10_000)
-	assert_eq(far.hp, 1_000_000, "дальше 2000 от Стены")
-	assert_eq(out.hp, 1_000_000, "дальше 1500 по горизонтали")
+	assert_eq(edge.hp, 1_000_000 - 10_000)
+	assert_eq(corner.hp, 1_000_000 - 10_000)
+	assert_eq(far.hp, 1_000_000, "дальше 2500 от Стены")
+
+
+func test_steam_reach_is_limited_around_its_column() -> void:
+	var sim: BattleSim = SimTestHelpers.new_sim()
+	var g: SimGear = SimTestHelpers.put_gear(sim, "steam", 1, 3, 2)
+	sim.advance()
+	var inside: SimMonster = SimTestHelpers.put_monster(sim, "rustling", 5500, 1000)
+	var outside: SimMonster = SimTestHelpers.put_monster(sim, "rustling", 6000, 1000)
+	sim.call("_attack", g, sim.data.gear("steam"))
+	sim.call("_apply_hits")
+	assert_eq(inside.hp, 1_000_000 - 3_000)
+	assert_eq(outside.hp, 1_000_000, "дальше 2500 по горизонтали")
 
 
 func test_saw_clockwise_hits_at_most_three_targets_closest_to_wall() -> void:

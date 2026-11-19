@@ -53,7 +53,9 @@ jobs:
 
       - name: Эталонные журналы (временно, для фикстур)
         if: always()
-        run: ~/godot/godot --headless --path client --script res://tools/determinism_check.gd -- --print-fixtures 101,202,303
+        run: |
+          ~/godot/godot --headless --path client --script res://tools/determinism_check.gd -- --print-fixtures 101,202,303
+          make sim RUNS=200 GODOT=~/godot/godot
 
   server:
     runs-on: ubuntu-latest
