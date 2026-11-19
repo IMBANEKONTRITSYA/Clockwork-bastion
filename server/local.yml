@@ -1,0 +1,14 @@
+# Конфиг Nakama для локальной разработки. Ключи — заглушки, в продакшене задаются отдельно.
+name: bastion-local
+logger:
+  level: "DEBUG"
+runtime:
+  js_entrypoint: "index.js"
+  http_key: "local_http_key"
+session:
+  token_expiry_sec: 7200
+socket:
+  server_key: "local_server_key"
+console:
+  username: "admin"
+  password: "localdev-admin1"
