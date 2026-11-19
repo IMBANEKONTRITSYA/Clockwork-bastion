@@ -1,7 +1,7 @@
 extends GutTest
 ## Жест → запись в журнале: из запаса на сетку, по сетке, тап по Сердцу.
 
-var _layout: BattleLayout = _layout.new()
+var _layout: BattleLayout = BattleLayout.new()
 
 
 func _setup() -> BattleInput:

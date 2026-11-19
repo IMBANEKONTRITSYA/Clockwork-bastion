@@ -5,6 +5,7 @@ extends GutTest
 func _wave_sim() -> BattleSim:
 	var sim: BattleSim = SimTestHelpers.new_sim()
 	sim.phase = BattleSim.Phase.WAVE
+	sim.nuts = 0
 	return sim
 
 

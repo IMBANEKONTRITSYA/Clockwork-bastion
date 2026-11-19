@@ -44,6 +44,20 @@ static func from_tables(
 	return data
 
 
+## Копия данных с подменёнными параметрами забега — для перебора вариантов в симуляторе баланса.
+## Исходные таблицы не меняются.
+func with_run_overrides(overrides: Dictionary) -> SimData:
+	var copy: SimData = SimData.new()
+	copy.gears = gears
+	copy.monsters = monsters
+	copy._levels = _levels
+	copy._waves = _waves
+	copy._run = _run.copy()
+	for key: Variant in overrides:
+		copy._run.set_int(str(key), "value", Fixed.int_of(overrides[key], 0))
+	return copy
+
+
 ## Параметр забега из run.csv.
 func run_value(key: String) -> int:
 	return _run.get_int(key, "value")

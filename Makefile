@@ -38,10 +38,10 @@ fixtures:        ## Напечатать эталонные журналы бо�
 	$(GODOT) --headless --path client --script res://tools/determinism_check.gd -- \
 		--print-fixtures $(or $(SEEDS),101)
 
-sim:             ## Симулятор баланса: make sim RUNS=10000 -> tools/out/
+sim:             ## Симулятор баланса: make sim RUNS=10000 [VARIANTS="k=v,k=v|k=v"] -> tools/out/
 	mkdir -p tools/out
 	$(GODOT) --headless --path client --script res://tools/balance_sim.gd -- \
-		--runs $(RUNS) --out ../tools/out/sim-$$(date +%Y%m%d-%H%M%S).json
+		--runs $(RUNS) --variants "$(VARIANTS)" --out ../tools/out/sim-$$(date +%Y%m%d-%H%M%S).json
 
 data:            ## CSV из data/balance -> ресурсы client/data/*.tres
 	python3 tools/build_data.py data/balance client/data

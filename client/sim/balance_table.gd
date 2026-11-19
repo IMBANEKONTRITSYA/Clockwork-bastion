@@ -27,6 +27,22 @@ func get_int(id: String, column: String) -> int:
 	return value
 
 
+## Независимая копия: строки копируются, правки копии не трогают загруженный ресурс.
+func copy() -> BalanceTable:
+	var t: BalanceTable = BalanceTable.new()
+	t.table_name = table_name
+	t.columns = columns.duplicate()
+	for row: Dictionary in rows:
+		t.rows.append(row.duplicate())
+	return t
+
+
+## Меняет значение в копии таблицы (только для инструментов баланса: перебор вариантов).
+func set_int(id: String, column: String, value: int) -> void:
+	var row: Dictionary = get_row(id)
+	row[column] = value
+
+
 func get_ids() -> PackedStringArray:
 	var ids: PackedStringArray = PackedStringArray()
 	for row: Dictionary in rows:
