@@ -8,6 +8,7 @@ config_version=5
 config/name="Clockwork Bastion"
 config/description="Заводной Бастион"
 config/version="0.0.1"
+run/main_scene="res://game/battle/battle.tscn"
 config/features=PackedStringArray("4.7", "Mobile")
 
 [debug]

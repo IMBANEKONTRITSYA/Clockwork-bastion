@@ -1,2 +1,15 @@
 keys,ru,en
 GAME_TITLE,Заводной Бастион,Clockwork Bastion
+HUD_WAVE,Волна %d/%d,Wave %d/%d
+HUD_NUTS,Гайки: %d,Nuts: %d
+HUD_WALL,Стена: %d/%d,Wall: %d/%d
+HUD_LOAD,Нагрузка: %d/%d,Load: %d/%d
+HUD_REVERSE_READY,Реверс: готов,Reverse: ready
+HUD_REVERSE_WAIT,Реверс: %d с,Reverse: %d s
+BTN_SPEED_1,×1,×1
+BTN_SPEED_2,×2,×2
+BTN_NEXT_WAVE,В бой!,Fight!
+BTN_RESTART,Заново,Restart
+TITLE_PAUSE,Пауза: %d с,Break: %d s
+TITLE_WON,Победа!,Victory!
+TITLE_LOST,Стена пала,The Wall has fallen

@@ -41,6 +41,10 @@ var nuts: int = 0
 var kills: int = 0
 var attacks: int = 0
 
+## Удары последнего тика для отображения: (клетка x, клетка y, x монстра, y монстра).
+## В хэш не входит и на ход забега не влияет.
+var last_attacks: Array[Vector4i] = []
+
 var power: int = 0
 var gear_load: int = 0
 var reversed: bool = false
@@ -106,6 +110,7 @@ func apply_input(action: String, args: Dictionary) -> bool:
 func advance() -> void:
 	if is_over():
 		return
+	last_attacks.clear()
 	if _power_dirty:
 		gear_load = PowerSystem.recompute(grid, data, power, reversed)
 		_power_dirty = false
@@ -278,6 +283,7 @@ func _attack(g: SimGear, spec: SimSpecs.Gear) -> void:
 		hit.slow_pct = mode.slow_pct
 		hit.slow_ticks = mode.slow_ticks
 		_hits.append(hit)
+		last_attacks.append(Vector4i(g.x, g.y, m.x, m.y))
 
 
 ## Цели: живые монстры в зоне режима, ближайшие к Стене (при равенстве — меньший id).
