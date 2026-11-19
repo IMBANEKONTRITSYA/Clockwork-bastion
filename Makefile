@@ -4,7 +4,7 @@ GUT   := $(GODOT) --headless --path client -s addons/gut/gut_cmdln.gd -gexit
 RUNS  ?= 1000
 
 .PHONY: help test test-client test-server test-one lint determinism fixtures sim data \
-        server-up server-down build-rustore build-gplay
+        server-up server-down build-debug build-rustore build-gplay
 
 help:            ## Список команд
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-15s %s\n", $$1, $$2}'
@@ -47,6 +47,10 @@ server-up:       ## Поднять Nakama + PostgreSQL локально
 
 server-down:     ## Остановить локальный сервер (данные сохраняются)
 	cd server && docker compose down
+
+build-debug:     ## Debug-APK для своего телефона (ключ отладки, без магазинов)
+	mkdir -p build
+	$(GODOT) --headless --path client --export-debug "Android Debug" ../build/clockwork-bastion-debug.apk
 
 build-rustore:   ## Сборка для RuStore с оплатой (только у пользователя: ключи подписи)
 	$(GODOT) --headless --path client --export-release "Android RuStore" ../build/clockwork-bastion-rustore.apk
