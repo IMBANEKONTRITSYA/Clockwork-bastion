@@ -1,5 +1,8 @@
 # Монстры. HP и урон Стене — целые, скорость — клеток в секунду ×1000. core-rules §6, «Монстры и волны» в game-plan.
 # zigzag_amp — размах зигзага по горизонтали (×1000), zigzag_period — период в тиках (0 = идёт прямо).
-id,hp,speed_x1000,cost,wall_damage,nuts,first_wave,zigzag_amp_x1000,zigzag_period_ticks
-rustling,30,600,1,5,1,1,0,0
-squeaker,15,1200,1,3,1,3,1000,60
+# boss = 1 — босс: выходит только на своей волне (waves.csv), последним, по центру; случайно не выпадает.
+id,hp,speed_x1000,wall_damage,nuts,first_wave,zigzag_amp_x1000,zigzag_period_ticks,boss
+rustling,30,600,5,1,1,0,0,0
+squeaker,15,1200,3,1,3,1000,60,0
+colossus,400,250,25,10,99,0,0,1
+magnetron,700,300,40,20,99,0,0,1

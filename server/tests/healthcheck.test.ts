@@ -6,7 +6,7 @@ describe("healthcheck", () => {
     expect(buildHealthcheckResponse()).toEqual({
       status: "ok",
       server_version: SERVER_VERSION,
-      sim_versions: [2],
+      sim_versions: [3],
     });
   });
 

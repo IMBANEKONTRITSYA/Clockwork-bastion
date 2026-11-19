@@ -17,9 +17,8 @@ buy_count_1_permille,500
 buy_count_2_permille,350
 buy_count_3_permille,150
 stock_overflow_nuts,1
-wave_budget_base,10
-wave_budget_per_wave,4
 wave_pause_ticks,450
 wave_spawn_interval_ticks,20
 waves_total,10
+monster_hp_scale,1000
 field_length_x1000,12000

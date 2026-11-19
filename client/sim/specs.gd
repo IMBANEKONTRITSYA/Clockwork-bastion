@@ -33,9 +33,9 @@ class Monster:
 	var id: String = ""
 	var hp: int = 0
 	var speed_x1000: int = 0
-	var cost: int = 0
 	var wall_damage: int = 0
 	var nuts: int = 0
 	var first_wave: int = 0
 	var zigzag_amp_x1000: int = 0
 	var zigzag_period_ticks: int = 0
+	var boss: bool = false

@@ -19,7 +19,7 @@ static func load_default() -> SimData:
 		. from_tables(
 			_load_table("run"),
 			_load_table("level_scaling"),
-			_load_table("wave_scaling"),
+			_load_table("waves"),
 			_load_table("gears"),
 			_load_table("monsters"),
 		)
@@ -77,11 +77,27 @@ func level_dmg_mul(level: int) -> int:
 	return _levels.get_int(str(level), "dmg_mul_x1000")
 
 
-## Множитель здоровья монстров на волне w (после конца таблицы — последнее значение), ×1000.
+## Множитель здоровья монстров на волне w из waves.csv, ×1000.
+## После конца таблицы — последняя строка.
 func wave_hp_mul(wave: int) -> int:
-	var last: int = _waves.rows.size()
-	var w: int = Fixed.clamp_int(wave, 1, last)
-	return _waves.get_int(str(w), "hp_mul_x1000")
+	return _waves.get_int(_wave_key(wave), "hp_mul_x1000")
+
+
+## Сколько монстров в волне вместе с боссом.
+func wave_count(wave: int) -> int:
+	return _waves.get_int(_wave_key(wave), "count")
+
+
+## Босс волны или "" — если волна без босса. Боссы только в своих строках таблицы.
+func wave_boss(wave: int) -> String:
+	if wave < 1 or wave > _waves.rows.size():
+		return ""
+	var boss: String = str(_waves.get_row(str(wave))["boss"])
+	return "" if boss == "none" else boss
+
+
+func _wave_key(wave: int) -> String:
+	return str(Fixed.clamp_int(wave, 1, _waves.rows.size()))
 
 
 func gear(id: String) -> SimSpecs.Gear:
@@ -135,7 +151,7 @@ static func _monster_from_row(t: BalanceTable, id: String) -> SimSpecs.Monster:
 	m.id = id
 	m.hp = t.get_int(id, "hp")
 	m.speed_x1000 = t.get_int(id, "speed_x1000")
-	m.cost = t.get_int(id, "cost")
+	m.boss = t.get_int(id, "boss") == 1
 	m.wall_damage = t.get_int(id, "wall_damage")
 	m.nuts = t.get_int(id, "nuts")
 	m.first_wave = t.get_int(id, "first_wave")

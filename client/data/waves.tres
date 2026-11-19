@@ -1,0 +1,59 @@
+[gd_resource type="Resource" script_class="BalanceTable" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://sim/balance_table.gd" id="1_table"]
+
+[resource]
+script = ExtResource("1_table")
+table_name = "waves"
+columns = PackedStringArray("id", "count", "hp_mul_x1000", "boss")
+rows = [{
+"id": 1,
+"count": 8,
+"hp_mul_x1000": 1000,
+"boss": "none"
+}, {
+"id": 2,
+"count": 9,
+"hp_mul_x1000": 1100,
+"boss": "none"
+}, {
+"id": 3,
+"count": 10,
+"hp_mul_x1000": 1210,
+"boss": "none"
+}, {
+"id": 4,
+"count": 11,
+"hp_mul_x1000": 1330,
+"boss": "none"
+}, {
+"id": 5,
+"count": 11,
+"hp_mul_x1000": 1460,
+"boss": "colossus"
+}, {
+"id": 6,
+"count": 12,
+"hp_mul_x1000": 1610,
+"boss": "none"
+}, {
+"id": 7,
+"count": 13,
+"hp_mul_x1000": 1770,
+"boss": "none"
+}, {
+"id": 8,
+"count": 14,
+"hp_mul_x1000": 1950,
+"boss": "none"
+}, {
+"id": 9,
+"count": 15,
+"hp_mul_x1000": 2140,
+"boss": "none"
+}, {
+"id": 10,
+"count": 15,
+"hp_mul_x1000": 2360,
+"boss": "magnetron"
+}]

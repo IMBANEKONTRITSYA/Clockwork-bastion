@@ -58,12 +58,6 @@ rows = [{
 "id": "stock_overflow_nuts",
 "value": 1
 }, {
-"id": "wave_budget_base",
-"value": 10
-}, {
-"id": "wave_budget_per_wave",
-"value": 4
-}, {
 "id": "wave_pause_ticks",
 "value": 450
 }, {
@@ -72,6 +66,9 @@ rows = [{
 }, {
 "id": "waves_total",
 "value": 10
+}, {
+"id": "monster_hp_scale",
+"value": 1000
 }, {
 "id": "field_length_x1000",
 "value": 12000

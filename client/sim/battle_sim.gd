@@ -154,6 +154,14 @@ func mark_grid_changed() -> void:
 	_power_dirty = true
 
 
+## Живой босс на поле или null — для полосы здоровья в интерфейсе.
+func current_boss() -> SimMonster:
+	for m: SimMonster in monsters:
+		if m.is_alive() and data.monster(m.type).boss:
+			return m
+	return null
+
+
 func monster_by_id(monster_id: int) -> SimMonster:
 	for m: SimMonster in monsters:
 		if m.id == monster_id:
@@ -430,7 +438,10 @@ func _spawn(type: String) -> void:
 	m.type = type
 	m.max_hp = WaveDirector.monster_hp(data, spec, wave)
 	m.hp = m.max_hp
-	m.base_x = rng.next_range(0, SimGrid.WIDTH) * Fixed.ONE
+	if spec.boss:
+		m.base_x = SimGrid.HEART_X * Fixed.ONE
+	else:
+		m.base_x = rng.next_range(0, SimGrid.WIDTH) * Fixed.ONE
 	m.x = m.base_x
 	m.y = data.run_value("field_length_x1000")
 	monsters.append(m)
