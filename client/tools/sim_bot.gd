@@ -1,7 +1,7 @@
 class_name SimBot
 extends RefCounted
-## Простой бот-игрок для симулятора баланса и тестов: ставит шестерни с конвейера,
-## сливает одинаковые, запускает волну, когда конвейер пуст, и жмёт Реверс,
+## Простой бот-игрок для симулятора баланса и тестов: покупает шестерни, когда хватает гаек,
+## ставит их из запаса, сливает одинаковые, запускает волну, когда запас пуст, и жмёт Реверс,
 ## когда у Стены толпа. Действует только через входы журнала — как настоящий игрок.
 
 const THINK_EVERY_TICKS: int = 10
@@ -33,8 +33,8 @@ func play(data: SimData, seed_value: int, max_ticks: int = RunLog.MAX_TICKS) -> 
 func decide(sim: BattleSim) -> Array[Array]:
 	var actions: Array[Array] = []
 	var planned: Dictionary = {}
-	for slot: int in range(sim.conveyor.size() - 1, -1, -1):
-		var item: BattleSim.ConveyorItem = sim.conveyor[slot]
+	for slot: int in range(sim.stock.size() - 1, -1, -1):
+		var item: BattleSim.StockItem = sim.stock[slot]
 		var cell: Vector2i = _merge_target(sim, item, planned)
 		if cell.x < 0:
 			cell = _free_cell(sim, planned)
@@ -42,6 +42,8 @@ func decide(sim: BattleSim) -> Array[Array]:
 			continue
 		planned[cell] = true
 		actions.append(["place", {"slot": slot, "x": cell.x, "y": cell.y}])
+	if sim.can_buy():
+		actions.append(["buy", {}])
 	if use_reverse and sim.phase == BattleSim.Phase.WAVE and sim.reverse_cooldown == 0:
 		if _crowd_at_wall(sim) >= CROWD_SIZE:
 			actions.append(["reverse", {}])
@@ -50,7 +52,7 @@ func decide(sim: BattleSim) -> Array[Array]:
 	return actions
 
 
-func _merge_target(sim: BattleSim, item: BattleSim.ConveyorItem, planned: Dictionary) -> Vector2i:
+func _merge_target(sim: BattleSim, item: BattleSim.StockItem, planned: Dictionary) -> Vector2i:
 	for g: SimGear in sim.grid.gears:
 		var cell: Vector2i = Vector2i(g.x, g.y)
 		if planned.has(cell):

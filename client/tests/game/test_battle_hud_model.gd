@@ -14,6 +14,14 @@ func test_start_of_run_shows_pause_with_15_seconds() -> void:
 	assert_eq(m.wall_max, 100)
 	assert_eq(m.waves_total, 10)
 	assert_eq(m.reverse_ready, 1000)
+	assert_eq(m.price, 6)
+	assert_true(m.can_buy)
+
+
+func test_buy_disabled_without_nuts() -> void:
+	var sim: BattleSim = _sim()
+	sim.nuts = 0
+	assert_false(BattleHudModel.from_sim(sim).can_buy)
 
 
 func test_wave_hides_overlay() -> void:

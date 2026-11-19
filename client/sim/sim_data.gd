@@ -98,7 +98,7 @@ static func _gear_from_row(t: BalanceTable, id: String) -> SimSpecs.Gear:
 	g.element = str(t.get_row(id)["element"])
 	g.base_damage = t.get_int(id, "base_damage")
 	g.hits_per_rev_x1000 = t.get_int(id, "hits_per_rev_x1000")
-	g.conveyor_weight = t.get_int(id, "conveyor_weight")
+	g.shop_weight = t.get_int(id, "shop_weight")
 	g.cw = _mode_from_row(t, id, "cw_")
 	g.ccw = _mode_from_row(t, id, "ccw_")
 	return g

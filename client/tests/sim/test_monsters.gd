@@ -57,7 +57,7 @@ func test_zigzag_offset_is_triangle_wave() -> void:
 
 func test_killed_monster_gives_nuts_and_kill() -> void:
 	var sim: BattleSim = _wave_sim()
-	var g: SimGear = SimTestHelpers.put_gear(sim, "saw", 1, 3, 2)
+	var g: SimGear = SimTestHelpers.put_gear(sim, "saw", 1, 2, 1)
 	sim.advance()
 	SimTestHelpers.put_monster(sim, "rustling", 3000, 3000, 5_000)
 	sim.call("_attack", g, sim.data.gear("saw"))

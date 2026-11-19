@@ -1,10 +1,11 @@
 class_name BattleHud
 extends CanvasLayer
-## Верхняя панель (волна, гайки, Стена, нагрузка, Реверс), кнопка ×2
-## и оверлей паузы / итога. Связь наверх — только сигналами.
+## Верхняя панель (волна, гайки, Стена, нагрузка, Реверс), кнопки «Купить» и ×2,
+## оверлей паузы / итога. Связь наверх — только сигналами.
 
 signal next_wave_pressed
 signal speed_pressed
+signal buy_pressed
 signal restart_pressed
 
 var _wave: Label = Label.new()
@@ -12,6 +13,7 @@ var _nuts: Label = Label.new()
 var _wall: Label = Label.new()
 var _load: Label = Label.new()
 var _reverse: Label = Label.new()
+var _buy: Button = Button.new()
 var _speed: Button = Button.new()
 var _overlay: PanelContainer = PanelContainer.new()
 var _overlay_title: Label = Label.new()
@@ -28,8 +30,9 @@ func _ready() -> void:
 		label.add_theme_font_size_override("font_size", 30)
 		bar.add_child(label)
 	add_child(bar)
-	_speed.position = Vector2(940, 1745)
-	_speed.size = Vector2(120, 150)
+	_buy.add_theme_font_size_override("font_size", 34)
+	_buy.pressed.connect(func() -> void: buy_pressed.emit())
+	add_child(_buy)
 	_speed.add_theme_font_size_override("font_size", 40)
 	_speed.pressed.connect(func() -> void: speed_pressed.emit())
 	add_child(_speed)
@@ -43,9 +46,19 @@ func _ready() -> void:
 	box.add_child(_overlay_title)
 	box.add_child(_overlay_button)
 	_overlay.add_child(box)
-	_overlay.position = Vector2(240, 420)
 	_overlay.size = Vector2(600, 320)
 	add_child(_overlay)
+
+
+## Расставляет кнопки и оверлей по раскладке экрана.
+func place(layout: BattleLayout) -> void:
+	var buy: Rect2 = layout.buy_rect()
+	_buy.position = buy.position
+	_buy.size = buy.size
+	var speed: Rect2 = layout.speed_rect()
+	_speed.position = speed.position
+	_speed.size = speed.size
+	_overlay.position = layout.field_center() - _overlay.size * 0.5
 
 
 func apply(model: BattleHudModel, speed: int) -> void:
@@ -58,6 +71,8 @@ func apply(model: BattleHudModel, speed: int) -> void:
 		_reverse.text = tr("HUD_REVERSE_READY")
 	else:
 		_reverse.text = _fmt("HUD_REVERSE_WAIT", [model.reverse_seconds_left])
+	_buy.text = _fmt("BTN_BUY", [model.price])
+	_buy.disabled = not model.can_buy
 	_speed.text = tr("BTN_SPEED_2") if speed == 2 else tr("BTN_SPEED_1")
 	_overlay_kind = model.overlay
 	_overlay.visible = model.overlay != BattleHudModel.Overlay.NONE

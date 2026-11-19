@@ -51,6 +51,12 @@ jobs:
       - name: Детерминизм
         run: make determinism GODOT=~/godot/godot
 
+      - name: Эталон и баланс (временно)
+        if: always()
+        run: |
+          make fixtures SEEDS=101 GODOT=~/godot/godot
+          make sim RUNS=200 GODOT=~/godot/godot
+
   server:
     runs-on: ubuntu-latest
     defaults:

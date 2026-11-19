@@ -1,29 +1,31 @@
 class_name BattleInput
 extends RefCounted
-## Жесты игрока → входы журнала: перетащить с конвейера на сетку (поставить или слить),
+## Жесты игрока → входы журнала: перетащить из запаса на сетку (поставить или слить),
 ## перетащить шестерню по сетке (переставить или слить), тап по Сердцу (Реверс).
 
 enum Drag { NONE, SLOT, GEAR }
 
 var controller: BattleController
+var layout: BattleLayout
 var drag: Drag = Drag.NONE
 var drag_slot: int = -1
 var drag_cell: Vector2i = Vector2i(-1, -1)
 var pointer: Vector2 = Vector2.ZERO
 
 
-func _init(battle: BattleController) -> void:
+func _init(battle: BattleController, screen_layout: BattleLayout) -> void:
 	controller = battle
+	layout = screen_layout
 
 
 func press(pos: Vector2) -> void:
 	pointer = pos
-	var slot: int = BattleLayout.slot_at(pos)
-	if slot >= 0 and slot < controller.sim.conveyor.size():
+	var slot: int = layout.slot_at(pos)
+	if slot >= 0 and slot < controller.sim.stock.size():
 		drag = Drag.SLOT
 		drag_slot = slot
 		return
-	var cell: Vector2i = BattleLayout.cell_at(pos)
+	var cell: Vector2i = layout.cell_at(pos)
 	if cell.x < 0:
 		return
 	if SimGrid.is_heart(cell.x, cell.y):
@@ -41,7 +43,7 @@ func move(pos: Vector2) -> void:
 ## Отпускание: возвращает true, если действие принято симуляцией.
 func release(pos: Vector2) -> bool:
 	pointer = pos
-	var cell: Vector2i = BattleLayout.cell_at(pos)
+	var cell: Vector2i = layout.cell_at(pos)
 	var accepted: bool = false
 	if cell.x >= 0:
 		match drag:
@@ -67,8 +69,8 @@ func cancel() -> void:
 func dragged_type() -> String:
 	match drag:
 		Drag.SLOT:
-			if drag_slot < controller.sim.conveyor.size():
-				return controller.sim.conveyor[drag_slot].type
+			if drag_slot < controller.sim.stock.size():
+				return controller.sim.stock[drag_slot].type
 		Drag.GEAR:
 			var g: SimGear = controller.sim.grid.gear_at(drag_cell.x, drag_cell.y)
 			if g != null:
@@ -79,8 +81,8 @@ func dragged_type() -> String:
 func dragged_level() -> int:
 	match drag:
 		Drag.SLOT:
-			if drag_slot < controller.sim.conveyor.size():
-				return controller.sim.conveyor[drag_slot].level
+			if drag_slot < controller.sim.stock.size():
+				return controller.sim.stock[drag_slot].level
 		Drag.GEAR:
 			var g: SimGear = controller.sim.grid.gear_at(drag_cell.x, drag_cell.y)
 			if g != null:

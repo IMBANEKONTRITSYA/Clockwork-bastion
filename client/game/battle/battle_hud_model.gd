@@ -15,6 +15,8 @@ var overloaded: bool = false
 ## Готовность Реверса ×1000: 1000 — можно жать.
 var reverse_ready: int = 0
 var reverse_seconds_left: int = 0
+var price: int = 0
+var can_buy: bool = false
 var overlay: Overlay = Overlay.NONE
 var pause_seconds_left: int = 0
 
@@ -25,6 +27,8 @@ static func from_sim(sim: BattleSim) -> BattleHudModel:
 	m.wave = sim.wave
 	m.waves_total = sim.data.run_value("waves_total")
 	m.nuts = sim.nuts
+	m.price = sim.price
+	m.can_buy = sim.can_buy()
 	m.wall = sim.wall
 	m.wall_max = sim.data.run_value("wall_hp")
 	m.gear_load = sim.gear_load

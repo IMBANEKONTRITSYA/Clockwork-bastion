@@ -34,7 +34,7 @@ func test_long_frame_is_capped_and_backlog_dropped() -> void:
 func test_submit_records_input_at_current_tick() -> void:
 	var c: BattleController = _controller()
 	c.update(0.25)
-	assert_true(c.submit("place", {"slot": 0, "x": 3, "y": 3}))
+	assert_true(c.submit("place", {"slot": 0, "x": 2, "y": 2}))
 	assert_eq(c.run_log.inputs.size(), 1)
 	var entry: Array = c.run_log.inputs[0]
 	var at: int = entry[0]
@@ -45,14 +45,14 @@ func test_submit_records_input_at_current_tick() -> void:
 
 func test_rejected_input_is_not_recorded() -> void:
 	var c: BattleController = _controller()
-	assert_false(c.submit("place", {"slot": 0, "x": 3, "y": 4}))
+	assert_false(c.submit("place", {"slot": 0, "x": 2, "y": 3}))
 	assert_eq(c.run_log.inputs.size(), 0)
 
 
 func test_recorded_log_replays_to_same_state() -> void:
 	var data: SimData = SimData.load_default()
 	var c: BattleController = BattleController.new(data, 55)
-	c.submit("place", {"slot": 0, "x": 3, "y": 3})
+	c.submit("place", {"slot": 0, "x": 2, "y": 2})
 	c.update(0.25)
 	c.submit("next_wave")
 	for i: int in 40:

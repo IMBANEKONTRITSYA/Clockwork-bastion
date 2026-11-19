@@ -10,6 +10,7 @@ BTN_SPEED_1,×1,×1
 BTN_SPEED_2,×2,×2
 BTN_NEXT_WAVE,В бой!,Fight!
 BTN_RESTART,Заново,Restart
+BTN_BUY,Купить: %d,Buy: %d
 TITLE_PAUSE,Пауза: %d с,Break: %d s
 TITLE_WON,Победа!,Victory!
 TITLE_LOST,Стена пала,The Wall has fallen

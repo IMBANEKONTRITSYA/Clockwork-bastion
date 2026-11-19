@@ -2,8 +2,8 @@ class_name BattleSim
 extends RefCounted
 ## Детерминированная симуляция одного забега (core-rules §2–6).
 ## Вход — только действия игрока через apply_input(); время — только тики advance().
-## Порядок вызовов SimRng (протокол): старт конвейера → [на старте волны: состав волны]
-## → [на спавне: колонка монстра] → [на поставке конвейера: тип шестерни].
+## Порядок вызовов SimRng (протокол): стартовые шестерни запаса → [на старте волны: состав волны]
+## → [на спавне: колонка монстра] → [на покупке: количество 1–3, затем тип каждой шестерни].
 
 enum Phase { PAUSE, WAVE, WON, LOST }
 
@@ -11,7 +11,7 @@ const MAX_ATTACKS_PER_TICK: int = 4
 const FIELD_LANES_X1000: int = (SimGrid.WIDTH - 1) * Fixed.ONE
 
 
-class ConveyorItem:
+class StockItem:
 	extends RefCounted
 	var type: String = ""
 	var level: int = 1
@@ -30,7 +30,8 @@ var data: SimData
 var rng: SimRng
 var grid: SimGrid = SimGrid.new()
 var monsters: Array[SimMonster] = []
-var conveyor: Array[ConveyorItem] = []
+## Запас: купленные шестерни, ждущие установки на сетку.
+var stock: Array[StockItem] = []
 
 var tick: int = 0
 var phase: Phase = Phase.PAUSE
@@ -52,7 +53,10 @@ var reverse_stop: int = 0
 var reverse_cooldown: int = 0
 var spin_ticks: int = 0
 var pause_timer: int = 0
-var conveyor_timer: int = 0
+## Цена следующей покупки в гайках.
+var price: int = 0
+## Сколько шестерней дала последняя покупка (для подсказки в интерфейсе; в хэш не входит).
+var last_buy_count: int = 0
 
 var _spawn_queue: Array[String] = []
 var _spawn_timer: int = 0
@@ -68,8 +72,10 @@ func _init(sim_data: SimData, seed_value: int) -> void:
 	wall = data.run_value("wall_hp")
 	power = data.run_value("heart_power")
 	pause_timer = data.run_value("wave_pause_ticks")
-	for i: int in data.run_value("conveyor_start_items"):
-		conveyor.append(_roll_conveyor_item())
+	nuts = data.run_value("start_nuts")
+	price = data.run_value("buy_price_base")
+	for i: int in data.run_value("start_gears"):
+		_add_to_stock(_roll_gear_type())
 
 
 func is_over() -> bool:
@@ -94,16 +100,19 @@ func result() -> Dictionary:
 func apply_input(action: String, args: Dictionary) -> bool:
 	if is_over():
 		return false
+	var accepted: bool = false
 	match action:
 		"place":
-			return _input_place(args)
+			accepted = _input_place(args)
 		"move":
-			return _input_move(args)
+			accepted = _input_move(args)
 		"reverse":
-			return _input_reverse()
+			accepted = _input_reverse()
 		"next_wave":
-			return _input_next_wave()
-	return false
+			accepted = _input_next_wave()
+		"buy":
+			accepted = _input_buy()
+	return accepted
 
 
 ## Один тик симуляции; входы этого тика уже применены через apply_input().
@@ -121,6 +130,11 @@ func advance() -> void:
 	_step_director()
 	_step_timers()
 	tick += 1
+
+
+## Можно ли сейчас купить: хватает гаек и есть свободный слот запаса.
+func can_buy() -> bool:
+	return not is_over() and nuts >= price and stock.size() < data.run_value("stock_slots")
 
 
 ## Множитель раскрутки ×1000: 0 во время остановки Реверса, затем линейно до 1000.
@@ -155,7 +169,7 @@ func state_hash() -> String:
 		h.add_int(v)
 	for v: int in [power, gear_load, reverse_stop, reverse_cooldown, spin_ticks, pause_timer]:
 		h.add_int(v)
-	h.add_int(conveyor_timer)
+	h.add_int(price)
 	h.add_bool(reversed)
 	h.add_int(rng.get_state())
 	for g: SimGear in grid.gears:
@@ -169,7 +183,7 @@ func state_hash() -> String:
 		for v: int in [m.hp, m.x, m.y, m.age, m.slow_pct, m.slow_ticks]:
 			h.add_int(v)
 		h.add_bool(m.breached)
-	for item: ConveyorItem in conveyor:
+	for item: StockItem in stock:
 		h.add_string(item.type)
 		h.add_int(item.level)
 	for id: String in _spawn_queue:
@@ -184,15 +198,15 @@ func _input_place(args: Dictionary) -> bool:
 	var slot: int = _arg_int(args, "slot")
 	var x: int = _arg_int(args, "x")
 	var y: int = _arg_int(args, "y")
-	if slot < 0 or slot >= conveyor.size():
+	if slot < 0 or slot >= stock.size():
 		return false
-	var item: ConveyorItem = conveyor[slot]
+	var item: StockItem = stock[slot]
 	if grid.is_free(x, y):
 		grid.place(SimGear.create(_next_gear_id, item.type, item.level, x, y))
 		_next_gear_id += 1
 	elif not _merge_into(grid.gear_at(x, y), item.type, item.level):
 		return false
-	conveyor.remove_at(slot)
+	stock.remove_at(slot)
 	_power_dirty = true
 	return true
 
@@ -224,6 +238,20 @@ func _input_reverse() -> bool:
 	reverse_cooldown = data.run_value("reverse_cooldown_ticks")
 	spin_ticks = 0
 	_power_dirty = true
+	return true
+
+
+## Покупка: списать цену, поднять цену, выбросить 1–3 случайные шестерни в запас.
+## Не поместившиеся сразу переплавляются в гайки.
+func _input_buy() -> bool:
+	if not can_buy():
+		return false
+	nuts -= price
+	price += data.run_value("buy_price_step")
+	var count: int = _roll_buy_count()
+	last_buy_count = count
+	for i: int in count:
+		_add_to_stock(_roll_gear_type())
 	return true
 
 
@@ -375,12 +403,6 @@ func _step_director() -> void:
 func _step_timers() -> void:
 	if reverse_cooldown > 0:
 		reverse_cooldown -= 1
-	if phase != Phase.WAVE:
-		return
-	conveyor_timer += 1
-	if conveyor_timer >= data.run_value("conveyor_interval_ticks"):
-		conveyor_timer = 0
-		_deliver_conveyor_item()
 
 
 func _start_wave() -> void:
@@ -389,7 +411,6 @@ func _start_wave() -> void:
 	_spawn_queue = WaveDirector.compose(data, rng, wave)
 	_spawn_timer = 0
 	spin_ticks = 0
-	conveyor_timer = 0
 
 
 func _finish_wave() -> void:
@@ -415,25 +436,44 @@ func _spawn(type: String) -> void:
 	monsters.append(m)
 
 
-func _deliver_conveyor_item() -> void:
-	if conveyor.size() >= data.run_value("conveyor_slots"):
-		conveyor.remove_at(0)
-		nuts += data.run_value("conveyor_overflow_nuts")
-	conveyor.append(_roll_conveyor_item())
+func _add_to_stock(type: String) -> void:
+	if stock.size() >= data.run_value("stock_slots"):
+		nuts += data.run_value("stock_overflow_nuts")
+		return
+	var item: StockItem = StockItem.new()
+	item.type = type
+	stock.append(item)
 
 
-func _roll_conveyor_item() -> ConveyorItem:
+## Сколько шестерней даст покупка: 1, 2 или 3 по весам из run.csv. Один вызов RNG.
+func _roll_buy_count() -> int:
+	var weights: Array[int] = [
+		data.run_value("buy_count_1_permille"),
+		data.run_value("buy_count_2_permille"),
+		data.run_value("buy_count_3_permille"),
+	]
+	var total: int = 0
+	for w: int in weights:
+		total += w
+	var roll: int = rng.next_range(0, total)
+	for i: int in weights.size():
+		if roll < weights[i]:
+			return i + 1
+		roll -= weights[i]
+	return 1
+
+
+## Тип шестерни по весам shop_weight. Один вызов RNG.
+func _roll_gear_type() -> String:
 	var total: int = 0
 	for g: SimSpecs.Gear in data.gears:
-		total += g.conveyor_weight
+		total += g.shop_weight
 	var roll: int = rng.next_range(0, total)
-	var item: ConveyorItem = ConveyorItem.new()
 	for g: SimSpecs.Gear in data.gears:
-		if roll < g.conveyor_weight:
-			item.type = g.id
-			break
-		roll -= g.conveyor_weight
-	return item
+		if roll < g.shop_weight:
+			return g.id
+		roll -= g.shop_weight
+	return data.gears[0].id
 
 
 ## Целое из аргументов журнала. JSON отдаёт числа дробными — приводим к int; мусор → -1.

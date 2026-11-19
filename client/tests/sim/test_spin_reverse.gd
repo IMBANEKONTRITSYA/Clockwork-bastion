@@ -16,7 +16,7 @@ func test_spin_starts_from_zero_and_reaches_full_in_60_ticks() -> void:
 
 func test_reverse_flips_direction_of_gears() -> void:
 	var sim: BattleSim = SimTestHelpers.new_sim()
-	var g: SimGear = SimTestHelpers.put_gear(sim, "saw", 1, 3, 3)
+	var g: SimGear = SimTestHelpers.put_gear(sim, "saw", 1, 2, 2)
 	sim.advance()
 	assert_false(g.clockwise)
 	assert_true(sim.apply_input("reverse", {}))

@@ -20,7 +20,7 @@ class Gear:
 	var element: String = ""
 	var base_damage: int = 0
 	var hits_per_rev_x1000: int = 0
-	var conveyor_weight: int = 0
+	var shop_weight: int = 0
 	var cw: GearMode = GearMode.new()
 	var ccw: GearMode = GearMode.new()
 

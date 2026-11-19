@@ -6,10 +6,11 @@ extends Node2D
 const EFFECT_CAPACITY: int = 64
 const HIT_FLASH_SECONDS: float = 0.12
 const MONSTER_RADIUS: float = 26.0
-const GEAR_RADIUS: float = 52.0
+const GEAR_RADIUS: float = 68.0
 
 var controller: BattleController
 var input: BattleInput
+var layout: BattleLayout = BattleLayout.new()
 var effects: EffectPool = EffectPool.new(EFFECT_CAPACITY)
 
 var _prev_positions: Dictionary = {}
@@ -17,9 +18,10 @@ var _cur_positions: Dictionary = {}
 var _font: Font = ThemeDB.fallback_font
 
 
-func bind(battle: BattleController) -> void:
+func bind(battle: BattleController, screen_layout: BattleLayout) -> void:
 	controller = battle
-	input = BattleInput.new(battle)
+	layout = screen_layout
+	input = BattleInput.new(battle, layout)
 	_prev_positions.clear()
 	_cur_positions.clear()
 	queue_redraw()
@@ -58,32 +60,32 @@ func _draw() -> void:
 	if controller == null:
 		return
 	var sim: BattleSim = controller.sim
-	draw_rect(Rect2(Vector2.ZERO, BattleLayout.SCREEN), BattlePalette.BACKGROUND)
+	draw_rect(Rect2(Vector2.ZERO, layout.screen_size()), BattlePalette.BACKGROUND)
 	_draw_field(sim)
 	_draw_grid(sim)
-	_draw_conveyor(sim)
+	_draw_stock(sim)
 	_draw_effects()
 	_draw_drag(sim)
 
 
 func _draw_field(sim: BattleSim) -> void:
-	var top: float = BattleLayout.FIELD_TOP
-	var field_rect: Rect2 = Rect2(0.0, top, BattleLayout.SCREEN.x, BattleLayout.WALL_TOP - top)
+	var top: float = layout.field_top
+	var field_rect: Rect2 = Rect2(0.0, top, BattleLayout.WIDTH, layout.wall_top - top)
 	draw_rect(field_rect, BattlePalette.FIELD)
 	var wall_ratio: float = float(sim.wall) / maxf(1.0, float(sim.data.run_value("wall_hp")))
 	var wall_color: Color = BattlePalette.WALL_DAMAGED.lerp(BattlePalette.WALL, wall_ratio)
-	var wall_h: float = BattleLayout.WALL_BOTTOM - BattleLayout.WALL_TOP
-	draw_rect(Rect2(0.0, BattleLayout.WALL_TOP, BattleLayout.SCREEN.x, wall_h), wall_color)
+	var wall_h: float = layout.wall_bottom - layout.wall_top
+	draw_rect(Rect2(0.0, layout.wall_top, BattleLayout.WIDTH, wall_h), wall_color)
 	var field_len: int = sim.data.run_value("field_length_x1000")
 	var t: float = controller.alpha()
 	for m: SimMonster in sim.monsters:
 		if not m.is_alive():
 			continue
-		var cur: Vector2 = BattleLayout.field_pos(m.x, m.y, field_len)
+		var cur: Vector2 = layout.field_pos(m.x, m.y, field_len)
 		var pos: Vector2 = cur
 		if _prev_positions.has(m.id):
 			var prev: Vector2i = _prev_positions[m.id]
-			pos = BattleLayout.field_pos(prev.x, prev.y, field_len).lerp(cur, t)
+			pos = layout.field_pos(prev.x, prev.y, field_len).lerp(cur, t)
 		var fast: bool = sim.data.monster(m.type).zigzag_amp_x1000 > 0
 		var radius: float = MONSTER_RADIUS * (0.75 if fast else 1.0)
 		draw_circle(pos, radius, BattlePalette.MONSTER_FAST if fast else BattlePalette.MONSTER)
@@ -94,18 +96,18 @@ func _draw_field(sim: BattleSim) -> void:
 
 
 func _draw_grid(sim: BattleSim) -> void:
-	var hover: Vector2i = BattleLayout.cell_at(input.pointer)
+	var hover: Vector2i = layout.cell_at(input.pointer)
 	var dragging: bool = input.drag != BattleInput.Drag.NONE
 	for y: int in SimGrid.HEIGHT:
 		for x: int in SimGrid.WIDTH:
-			var rect: Rect2 = BattleLayout.cell_rect(x, y).grow(-4.0)
+			var rect: Rect2 = layout.cell_rect(x, y).grow(-4.0)
 			var cw: bool = PowerSystem.is_clockwise_cell(x, y, sim.reversed)
 			var fill: Color = BattlePalette.CELL
 			if dragging and hover == Vector2i(x, y):
 				fill = BattlePalette.direction(cw).darkened(0.35)
 			draw_rect(rect, fill)
 			draw_rect(rect, BattlePalette.direction(cw).darkened(0.55), false, 2.0)
-	var heart: Vector2 = BattleLayout.cell_center(SimGrid.HEART_X, SimGrid.HEART_Y)
+	var heart: Vector2 = layout.cell_center(SimGrid.HEART_X, SimGrid.HEART_Y)
 	draw_circle(heart, GEAR_RADIUS, BattlePalette.HEART)
 	_draw_arrow(heart, not sim.reversed, BattlePalette.TEXT)
 	if sim.reverse_cooldown > 0:
@@ -122,7 +124,7 @@ func _draw_grid(sim: BattleSim) -> void:
 			4.0
 		)
 	for g: SimGear in sim.grid.gears:
-		_draw_gear(BattleLayout.cell_center(g.x, g.y), g.type, g.level, g.connected, g.clockwise)
+		_draw_gear(layout.cell_center(g.x, g.y), g.type, g.level, g.connected, g.clockwise)
 
 
 func _draw_gear(center: Vector2, type: String, level: int, powered: bool, clockwise: bool) -> void:
@@ -164,16 +166,14 @@ func _draw_arrow(center: Vector2, clockwise: bool, color: Color) -> void:
 	draw_colored_polygon(head, color)
 
 
-func _draw_conveyor(sim: BattleSim) -> void:
+func _draw_stock(sim: BattleSim) -> void:
 	for i: int in BattleLayout.SLOTS_SHOWN:
-		var rect: Rect2 = BattleLayout.slot_rect(i)
-		var enabled: bool = i < sim.data.run_value("conveyor_slots")
+		var rect: Rect2 = layout.slot_rect(i)
+		var enabled: bool = i < sim.data.run_value("stock_slots")
 		draw_rect(rect, BattlePalette.SLOT if enabled else BattlePalette.BACKGROUND)
-		if (
-			i < sim.conveyor.size()
-			and not (input.drag == BattleInput.Drag.SLOT and input.drag_slot == i)
-		):
-			var item: BattleSim.ConveyorItem = sim.conveyor[i]
+		var dragged: bool = input.drag == BattleInput.Drag.SLOT and input.drag_slot == i
+		if i < sim.stock.size() and not dragged:
+			var item: BattleSim.StockItem = sim.stock[i]
 			_draw_gear(rect.get_center(), item.type, item.level, true, true)
 
 
@@ -188,7 +188,7 @@ func _draw_drag(sim: BattleSim) -> void:
 	var type: String = input.dragged_type()
 	if type == "":
 		return
-	var cell: Vector2i = BattleLayout.cell_at(input.pointer)
+	var cell: Vector2i = layout.cell_at(input.pointer)
 	var cw: bool = true
 	if cell.x >= 0:
 		cw = PowerSystem.is_clockwise_cell(cell.x, cell.y, sim.reversed)
@@ -205,6 +205,6 @@ func _snapshot() -> Dictionary:
 func _spawn_hit_effects() -> void:
 	var field_len: int = controller.sim.data.run_value("field_length_x1000")
 	for a: Vector4i in controller.sim.last_attacks:
-		var from: Vector2 = BattleLayout.cell_center(a.x, a.y)
-		var to: Vector2 = BattleLayout.field_pos(a.z, a.w, field_len)
+		var from: Vector2 = layout.cell_center(a.x, a.y)
+		var to: Vector2 = layout.field_pos(a.z, a.w, field_len)
 		effects.spawn(from, to, HIT_FLASH_SECONDS)

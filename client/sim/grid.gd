@@ -1,12 +1,12 @@
 class_name SimGrid
 extends RefCounted
-## Сетка механизма 7×5 (core-rules §3). y = 4 — нижний ряд, Сердце в (3, 4).
+## Сетка механизма 5×4 (core-rules §3). y = 3 — нижний ряд, Сердце в (2, 3).
 ## Шестерни хранятся в порядке возрастания id — это стабильный порядок перебора.
 
-const WIDTH: int = 7
-const HEIGHT: int = 5
-const HEART_X: int = 3
-const HEART_Y: int = 4
+const WIDTH: int = 5
+const HEIGHT: int = 4
+const HEART_X: int = 2
+const HEART_Y: int = 3
 const EMPTY: int = -1
 const BLOCKED: int = -2
 const HEART: int = -3
