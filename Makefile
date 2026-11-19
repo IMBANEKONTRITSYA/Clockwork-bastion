@@ -3,7 +3,7 @@ GODOT ?= godot
 GUT   := $(GODOT) --headless --path client -s addons/gut/gut_cmdln.gd -gexit
 RUNS  ?= 1000
 
-.PHONY: help test test-client test-server test-one lint determinism sim data \
+.PHONY: help test test-client test-server test-one lint determinism fixtures sim data \
         server-up server-down build-rustore build-gplay
 
 help:            ## Список команд
@@ -29,6 +29,10 @@ lint:            ## gdlint + gdformat --check + eslint + tsc
 determinism:     ## Эталонные журналы: хэш клиента == хэш валидатора
 	$(GODOT) --headless --path client --script res://tools/determinism_check.gd -- \
 		--fixtures res://tests/fixtures/runs
+
+fixtures:        ## Напечатать эталонные журналы бота: make fixtures SEEDS=101,202
+	$(GODOT) --headless --path client --script res://tools/determinism_check.gd -- \
+		--print-fixtures $(or $(SEEDS),101)
 
 sim:             ## Симулятор баланса: make sim RUNS=10000 -> tools/out/
 	mkdir -p tools/out
