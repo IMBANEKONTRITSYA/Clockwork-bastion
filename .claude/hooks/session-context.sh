@@ -9,8 +9,11 @@ if git rev-parse --git-dir >/dev/null 2>&1; then
   echo "- Последние коммиты:"
   git log --oneline -5 2>/dev/null | sed 's/^/  - /'
 fi
-# Активный план: самый свежий файл в docs/plans/ (кроме README)
-latest_plan=$(ls -t docs/plans/*.md 2>/dev/null | grep -v README | head -1)
+# Активный план: первый по номеру план в docs/plans/ с незакрытыми пунктами (кроме README)
+latest_plan=""
+for f in $(ls docs/plans/[0-9]*.md 2>/dev/null | sort); do
+  if grep -q '^- \[ \]' "$f"; then latest_plan="$f"; break; fi
+done
 if [ -n "$latest_plan" ]; then
   echo "- Активный план: $latest_plan (прочитай перед работой, если задача связана с ним)"
   open_tasks=$(grep -c '^- \[ \]' "$latest_plan" 2>/dev/null)
