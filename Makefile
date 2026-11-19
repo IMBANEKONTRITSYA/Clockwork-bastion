@@ -1,4 +1,5 @@
 # Заводной Бастион — команды разработки. Запускать из корня репозитория.
+SHELL := /bin/bash
 GODOT ?= godot
 GUT   := $(GODOT) --headless --path client -s addons/gut/gut_cmdln.gd -gexit
 RUNS  ?= 1000
@@ -11,8 +12,11 @@ help:            ## Список команд
 
 test: test-client test-server  ## Все тесты
 
-test-client:     ## Тесты клиента (GUT, headless)
-	$(GUT) -gdir=res://tests -ginclude_subdirs
+test-client:     ## Тесты клиента (GUT, headless). Падает и на тестах, которые не загрузились
+	@mkdir -p build
+	set -o pipefail; $(GUT) -gdir=res://tests -ginclude_subdirs 2>&1 | tee build/gut.log
+	@if grep -qE "SCRIPT ERROR|Ignoring script" build/gut.log; then \
+		echo "ОШИБКА: часть тестовых скриптов не загрузилась (см. SCRIPT ERROR выше)"; exit 1; fi
 
 test-server:     ## Тесты сервера (Jest)
 	cd server && npm test

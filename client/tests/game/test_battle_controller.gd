@@ -37,8 +37,10 @@ func test_submit_records_input_at_current_tick() -> void:
 	assert_true(c.submit("place", {"slot": 0, "x": 3, "y": 3}))
 	assert_eq(c.run_log.inputs.size(), 1)
 	var entry: Array = c.run_log.inputs[0]
-	assert_eq(entry[0], 7)
-	assert_eq(entry[1], "place")
+	var at: int = entry[0]
+	var action: String = entry[1]
+	assert_eq(at, 7)
+	assert_eq(action, "place")
 
 
 func test_rejected_input_is_not_recorded() -> void:
@@ -81,4 +83,5 @@ func test_finished_signal_carries_result() -> void:
 		if c.sim.is_over():
 			break
 	assert_signal_emitted(c, "finished")
-	assert_eq(c.run_log.client_result.get("outcome"), "lost")
+	var outcome: String = c.run_log.client_result.get("outcome", "")
+	assert_eq(outcome, "lost")

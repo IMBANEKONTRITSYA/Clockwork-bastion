@@ -5,7 +5,8 @@ extends GutTest
 func test_bot_run_finishes_and_replay_matches_client_result() -> void:
 	var data: SimData = SimData.load_default()
 	var run_log: RunLog = SimBot.new().play(data, 2024)
-	assert_ne(run_log.client_result.get("outcome"), "running", "забег должен закончиться")
+	var outcome: String = run_log.client_result.get("outcome", "")
+	assert_ne(outcome, "running", "забег должен закончиться")
 	var sim: BattleSim = RunLog.replay(run_log, data)
 	assert_eq(sim.result(), run_log.client_result)
 
@@ -41,7 +42,7 @@ func test_inputs_apply_before_tick_advance() -> void:
 	probe.apply_input("reverse", {})
 	probe.advance()
 	var replayed: BattleSim = RunLog.replay(run_log, data)
-	assert_eq(replayed.wave >= 1, true)
+	assert_gte(replayed.wave, 1)
 	assert_true(replayed.reversed)
 	assert_eq(probe.wave, 1)
 
