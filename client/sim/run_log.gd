@@ -40,12 +40,14 @@ func to_dict() -> Dictionary:
 static func from_dict(d: Dictionary) -> RunLog:
 	var run_log: RunLog = RunLog.new()
 	var seed_raw: Variant = d.get("seed")
-	if not (seed_raw is int or seed_raw is float):
+	if not _is_number(seed_raw):
 		return null
-	run_log.seed_value = int(seed_raw)
+	run_log.seed_value = Fixed.int_of(seed_raw)
 	run_log.run_id = str(d.get("run_id", ""))
-	run_log.chapter = int(d.get("chapter", 1))
-	run_log.sim_version = int(d.get("sim_version", SimVersion.SIM_VERSION))
+	run_log.chapter = Fixed.int_of(d.get("chapter", 1), 1)
+	run_log.sim_version = Fixed.int_of(
+		d.get("sim_version", SimVersion.SIM_VERSION), SimVersion.SIM_VERSION
+	)
 	run_log.loadout_hash = str(d.get("loadout_hash", ""))
 	var squad_raw: Variant = d.get("squad", [])
 	if squad_raw is Array:
@@ -62,14 +64,18 @@ static func from_dict(d: Dictionary) -> RunLog:
 		if not entry is Array:
 			return null
 		var e: Array = entry
-		if e.size() != 3 or not (e[0] is int or e[0] is float) or not e[1] is String:
+		if e.size() != 3 or not _is_number(e[0]) or not e[1] is String:
 			return null
 		var args: Dictionary = e[2] if e[2] is Dictionary else {}
-		run_log.inputs.append([int(e[0]), str(e[1]), args])
+		run_log.inputs.append([Fixed.int_of(e[0]), str(e[1]), args])
 	var result_raw: Variant = d.get("client_result", {})
 	if result_raw is Dictionary:
 		run_log.client_result = result_raw
 	return run_log
+
+
+static func _is_number(v: Variant) -> bool:
+	return typeof(v) == TYPE_INT or typeof(v) == TYPE_FLOAT
 
 
 ## Пересчитывает забег по журналу до конца (победа, поражение или MAX_TICKS).

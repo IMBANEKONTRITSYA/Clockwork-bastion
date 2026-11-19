@@ -15,7 +15,7 @@ func _init() -> void:
 		var run_log: RunLog = SimBot.new().play(data, seed_value)
 		var sim: BattleSim = RunLog.replay(run_log, data)
 		var waves: int = sim.waves_cleared
-		waves_hist[waves] = int(waves_hist.get(waves, 0)) + 1
+		waves_hist[waves] = Fixed.int_of(waves_hist.get(waves, 0), 0) + 1
 		if sim.outcome() == "won":
 			wins += 1
 		total_ticks += sim.tick

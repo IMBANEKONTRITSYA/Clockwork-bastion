@@ -438,7 +438,4 @@ func _roll_conveyor_item() -> ConveyorItem:
 
 ## Целое из аргументов журнала. JSON отдаёт числа дробными — приводим к int; мусор → -1.
 static func _arg_int(args: Dictionary, key: String) -> int:
-	var v: Variant = args.get(key, -1)
-	if v is int or v is float:
-		return int(v)
-	return -1
+	return Fixed.int_of(args.get(key, -1))

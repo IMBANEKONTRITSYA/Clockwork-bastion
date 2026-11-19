@@ -28,3 +28,12 @@ static func clamp_int(value: int, lo: int, hi: int) -> int:
 	if value > hi:
 		return hi
 	return value
+
+
+## Целое из значения журнала или JSON (там числа дробные). Не число — fallback.
+static func int_of(v: Variant, fallback: int = -1) -> int:
+	if v is int:
+		return v
+	if typeof(v) == TYPE_FLOAT:
+		return type_convert(v, TYPE_INT)
+	return fallback

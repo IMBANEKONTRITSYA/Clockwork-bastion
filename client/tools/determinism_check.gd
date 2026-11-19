@@ -100,7 +100,7 @@ static func _normalized(d: Dictionary) -> Dictionary:
 	keys.sort()
 	for k: Variant in keys:
 		var v: Variant = d[k]
-		out[str(k)] = int(v) if (v is int or v is float) else v
+		out[str(k)] = Fixed.int_of(v) if typeof(v) in [TYPE_INT, TYPE_FLOAT] else v
 	return out
 
 

@@ -9,6 +9,12 @@ func _item(type: String, level: int = 1) -> BattleSim.ConveyorItem:
 	return item
 
 
+func _set_conveyor(sim: BattleSim, items: Array[BattleSim.ConveyorItem]) -> void:
+	sim.conveyor.clear()
+	for item: BattleSim.ConveyorItem in items:
+		sim.conveyor.append(item)
+
+
 func test_run_starts_with_two_conveyor_items() -> void:
 	assert_eq(SimTestHelpers.new_sim().conveyor.size(), 2)
 
@@ -24,7 +30,7 @@ func test_conveyor_delivers_every_150_ticks_during_wave() -> void:
 
 func test_conveyor_overflow_melts_oldest_for_one_nut() -> void:
 	var sim: BattleSim = SimTestHelpers.new_sim()
-	sim.conveyor = [_item("saw"), _item("steam"), _item("saw", 2)]
+	_set_conveyor(sim, [_item("saw"), _item("steam"), _item("saw", 2)])
 	sim.apply_input("next_wave", {})
 	SimTestHelpers.run_ticks(sim, 150)
 	assert_eq(sim.conveyor.size(), 3)
@@ -34,7 +40,7 @@ func test_conveyor_overflow_melts_oldest_for_one_nut() -> void:
 
 func test_place_takes_item_from_slot() -> void:
 	var sim: BattleSim = SimTestHelpers.new_sim()
-	sim.conveyor = [_item("saw"), _item("steam")]
+	_set_conveyor(sim, [_item("saw"), _item("steam")])
 	assert_true(sim.apply_input("place", {"slot": 1, "x": 3, "y": 3}))
 	assert_eq(sim.grid.gear_at(3, 3).type, "steam")
 	assert_eq(sim.conveyor.size(), 1)
@@ -42,7 +48,7 @@ func test_place_takes_item_from_slot() -> void:
 
 func test_place_on_same_gear_merges() -> void:
 	var sim: BattleSim = SimTestHelpers.new_sim()
-	sim.conveyor = [_item("saw"), _item("saw")]
+	_set_conveyor(sim, [_item("saw"), _item("saw")])
 	sim.apply_input("place", {"slot": 0, "x": 3, "y": 3})
 	assert_true(sim.apply_input("place", {"slot": 0, "x": 3, "y": 3}))
 	assert_eq(sim.grid.gear_at(3, 3).level, 2)
@@ -51,7 +57,7 @@ func test_place_on_same_gear_merges() -> void:
 
 func test_place_on_different_gear_is_rejected() -> void:
 	var sim: BattleSim = SimTestHelpers.new_sim()
-	sim.conveyor = [_item("saw"), _item("steam")]
+	_set_conveyor(sim, [_item("saw"), _item("steam")])
 	sim.apply_input("place", {"slot": 0, "x": 3, "y": 3})
 	assert_false(sim.apply_input("place", {"slot": 0, "x": 3, "y": 3}))
 	assert_eq(sim.conveyor.size(), 1, "предмет остался на конвейере")
@@ -59,14 +65,14 @@ func test_place_on_different_gear_is_rejected() -> void:
 
 func test_merge_stops_at_level_5() -> void:
 	var sim: BattleSim = SimTestHelpers.new_sim()
-	sim.conveyor = [_item("saw", 5), _item("saw", 5)]
+	_set_conveyor(sim, [_item("saw", 5), _item("saw", 5)])
 	sim.apply_input("place", {"slot": 0, "x": 3, "y": 3})
 	assert_false(sim.apply_input("place", {"slot": 0, "x": 3, "y": 3}))
 
 
 func test_move_to_empty_cell_and_merge_by_move() -> void:
 	var sim: BattleSim = SimTestHelpers.new_sim()
-	sim.conveyor = [_item("saw"), _item("saw")]
+	_set_conveyor(sim, [_item("saw"), _item("saw")])
 	sim.apply_input("place", {"slot": 0, "x": 3, "y": 3})
 	sim.apply_input("place", {"slot": 0, "x": 2, "y": 4})
 	assert_true(sim.apply_input("move", {"from_x": 2, "from_y": 4, "x": 2, "y": 3}))
