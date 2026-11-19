@@ -8,7 +8,7 @@
 - [ ] 2. Проект Godot 4.7.2 в `client/` (портрет 1080×1920, stretch canvas_items, renderer Mobile, предупреждения типизации = ошибка) — тест: `godot --headless --path client --quit` без ошибок
 - [ ] 3. Установить GUT в `client/addons/gut/`, пустой тест `client/tests/test_smoke.gd` — тест: `make test-client`
 - [ ] 4. Папки `client/sim`, `client/game`, `client/meta`, `client/services`, `client/data`, `client/i18n/strings.csv` (ru, en) — тест: проект открывается
-- [ ] 5. `client/sim/rng.gd` (SimRng: 64-битный xorshift с маской, методы `next_int()`, `range(a, b)`, `chance_permille(p)`) и `client/sim/version.gd` (`SIM_VERSION := 1`) + тест: одинаковое зерно → одинаковые 1000 чисел; эталонные первые 10 чисел для зерна 123456789 записаны в тест — тест: `make test-one T=res://tests/sim/test_rng.gd`
+- [ ] 5. `client/sim/rng.gd` (SimRng: xorshift32 на 64-битных int с маской 0xFFFFFFFF, методы `next_int()`, `next_range(lo, hi)`, `chance_permille(p)`) и `client/sim/version.gd` (`SIM_VERSION := 1`) + тест: одинаковое зерно → одинаковые 1000 чисел; эталонные первые 10 чисел для зерна 123456789 записаны в тест — тест: `make test-one T=res://tests/sim/test_rng.gd`
 - [ ] 6. `server/`: package.json (TypeScript strict, eslint, prettier, jest), `docker-compose.yml` (nakama + postgres), `src/main.ts` с RPC `healthcheck` — тест: `make test-server`, `make server-up`
 - [ ] 7. `tools/build_data.py` + `data/balance/gears.csv` с одной строкой — тест: `make data` создаёт `client/data/gears.tres`
 - [ ] 8. `pip install "gdtoolkit==4.*"`, `make lint` зелёный

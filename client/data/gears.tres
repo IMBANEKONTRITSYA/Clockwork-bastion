@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BalanceTable" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://sim/balance_table.gd" id="1_table"]
+
+[resource]
+script = ExtResource("1_table")
+table_name = "gears"
+columns = PackedStringArray("id", "element", "base_damage", "hits_per_rev_x1000", "pierce")
+rows = [{
+"id": "saw",
+"element": "steel",
+"base_damage": 10,
+"hits_per_rev_x1000": 1000,
+"pierce": 3
+}]
