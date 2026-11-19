@@ -1,0 +1,35 @@
+# Godot
+client/.godot/
+client/android/build/
+client/export_credentials.cfg
+*.import.bak
+build/
+
+# Подпись и секреты
+*.keystore
+*.jks
+*.pem
+*.key
+secrets/
+service-account*.json
+.env
+.env.*
+!.env.example
+
+# Сервер
+server/node_modules/
+server/build/
+server/coverage/
+
+# Инструменты
+tools/out/
+__pycache__/
+.venv/
+
+# Claude Code — личное
+CLAUDE.local.md
+.claude/settings.local.json
+
+# Система
+.DS_Store
+Thumbs.db
