@@ -1,6 +1,6 @@
 extends GutTest
 ## Раскладка экрана: клетки, слоты запаса и поле совпадают по колонкам;
-## на любом телефоне нижняя панель прижата к низу, пустых полос нет.
+## на любом телефоне «Купить» прижата к низу, кнопки не перекрываются, пустых полос нет.
 
 const HEIGHTS: Array[float] = [1920.0, 2400.0]
 
@@ -18,28 +18,46 @@ func test_points_outside_grid_give_no_cell() -> void:
 	assert_eq(layout.cell_at(Vector2(500, 500)), Vector2i(-1, -1))
 
 
-func test_slots_and_buttons_do_not_overlap_grid_or_each_other() -> void:
+func test_bottom_controls_do_not_overlap_each_other_or_grid() -> void:
 	for h: float in HEIGHTS:
 		var layout: BattleLayout = BattleLayout.new(h)
-		var rects: Array[Rect2] = [layout.buy_rect(), layout.speed_rect()]
+		var grid: Rect2 = Rect2(
+			layout.grid_origin,
+			Vector2(BattleLayout.CELL * SimGrid.WIDTH, BattleLayout.CELL * SimGrid.HEIGHT)
+		)
+		var rects: Array[Rect2] = [layout.buy_rect(), grid]
 		for i: int in BattleLayout.SLOTS_SHOWN:
 			var center: Vector2 = layout.slot_rect(i).get_center()
 			assert_eq(layout.slot_at(center), i)
-			assert_eq(layout.cell_at(center), Vector2i(-1, -1))
 			rects.append(layout.slot_rect(i))
 		for a: int in rects.size():
-			assert_lte(rects[a].end.x, BattleLayout.WIDTH, "в ширину экрана")
+			assert_true(rects[a].position.x >= 0.0 and rects[a].end.x <= BattleLayout.WIDTH)
 			for b: int in range(a + 1, rects.size()):
-				assert_false(rects[a].intersects(rects[b]), "кнопки %d и %d перекрываются" % [a, b])
+				assert_false(
+					rects[a].intersects(rects[b]), "h=%d: %d и %d перекрываются" % [int(h), a, b]
+				)
 
 
-func test_bottom_panel_is_pinned_to_bottom_on_any_height() -> void:
+func test_buy_button_is_pinned_to_bottom_on_any_height() -> void:
 	for h: float in HEIGHTS:
 		var layout: BattleLayout = BattleLayout.new(h)
-		assert_almost_eq(layout.slot_rect(0).end.y, h - BattleLayout.BOTTOM_MARGIN, 0.01)
-		var grid_bottom: float = layout.cell_rect(0, SimGrid.HEIGHT - 1).end.y
-		assert_lt(grid_bottom, layout.slot_y, "сетка над панелью")
+		assert_almost_eq(layout.buy_rect().end.y, h - BattleLayout.BOTTOM_MARGIN, 0.01)
+		assert_lt(layout.slot_rect(0).end.y, layout.buy_rect().position.y)
 		assert_lt(layout.wall_bottom, layout.grid_origin.y, "Стена над сеткой")
+
+
+func test_side_buttons_and_fight_are_inside_field_and_apart() -> void:
+	for h: float in HEIGHTS:
+		var layout: BattleLayout = BattleLayout.new(h)
+		var field: Rect2 = layout.field_rect()
+		var pause: Rect2 = layout.side_button_rect(0)
+		var speed: Rect2 = layout.side_button_rect(1)
+		var fight: Rect2 = layout.fight_rect()
+		for r: Rect2 in [pause, speed, fight]:
+			assert_true(field.encloses(r), "кнопка внутри поля при h=%d" % int(h))
+		assert_false(pause.intersects(speed))
+		assert_false(fight.intersects(pause) or fight.intersects(speed))
+		assert_lt(layout.boss_bar_rect().end.y, layout.wall_top, "полоса босса над воротами")
 
 
 func test_taller_screen_gives_taller_field() -> void:

@@ -2,15 +2,21 @@ keys,ru,en
 GAME_TITLE,Заводной Бастион,Clockwork Bastion
 HUD_WAVE,Волна %d/%d,Wave %d/%d
 HUD_NUTS,Гайки: %d,Nuts: %d
-HUD_WALL,Стена: %d/%d,Wall: %d/%d
-HUD_LOAD,Нагрузка: %d/%d,Load: %d/%d
+HUD_KILLS,Убито: %d,Kills: %d
+HUD_LOAD,Нагрузка %d/%d,Load %d/%d
 HUD_REVERSE_READY,Реверс: готов,Reverse: ready
 HUD_REVERSE_WAIT,Реверс: %d с,Reverse: %d s
+HUD_AUTOSTART,Автостарт через %d с,Auto-start in %d s
+HUD_BOSS_AHEAD,Босс: %s,Boss: %s
 BTN_SPEED_1,×1,×1
 BTN_SPEED_2,×2,×2
-BTN_NEXT_WAVE,В бой!,Fight!
+BTN_PAUSE,II,II
+BTN_RESUME,»,»
+BTN_FIGHT,В бой!,Fight!
 BTN_RESTART,Заново,Restart
 BTN_BUY,Купить: %d,Buy: %d
-TITLE_PAUSE,Пауза: %d с,Break: %d s
+TITLE_PAUSED,Пауза,Paused
 TITLE_WON,Победа!,Victory!
 TITLE_LOST,Стена пала,The Wall has fallen
+BOSS_COLOSSUS,Ржавый Колосс,Rust Colossus
+BOSS_MAGNETRON,Магнитрон,Magnetron

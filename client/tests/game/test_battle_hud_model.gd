@@ -52,3 +52,29 @@ func test_lost_and_won_overlays() -> void:
 	assert_eq(BattleHudModel.from_sim(sim).overlay, BattleHudModel.Overlay.LOST)
 	sim.phase = BattleSim.Phase.WON
 	assert_eq(BattleHudModel.from_sim(sim).overlay, BattleHudModel.Overlay.WON)
+
+
+func test_pause_announces_next_wave_and_its_boss() -> void:
+	var sim: BattleSim = _sim()
+	sim.wave = 4
+	var m: BattleHudModel = BattleHudModel.from_sim(sim)
+	assert_eq(m.next_wave, 5)
+	assert_eq(m.next_boss_key, "BOSS_COLOSSUS")
+	sim.wave = 2
+	assert_eq(BattleHudModel.from_sim(sim).next_boss_key, "")
+
+
+func test_living_boss_is_shown_with_hp() -> void:
+	var sim: BattleSim = _sim()
+	sim.wave = 10
+	sim.call("_spawn", "magnetron")
+	var m: BattleHudModel = BattleHudModel.from_sim(sim)
+	assert_eq(m.boss_key, "BOSS_MAGNETRON")
+	assert_eq(m.boss_hp, m.boss_max_hp)
+	assert_gt(m.boss_max_hp, 0)
+
+
+func test_kills_are_counted() -> void:
+	var sim: BattleSim = _sim()
+	sim.kills = 7
+	assert_eq(BattleHudModel.from_sim(sim).kills, 7)
