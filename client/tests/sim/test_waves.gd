@@ -52,10 +52,13 @@ func test_same_seed_gives_same_wave() -> void:
 
 
 func test_monster_hp_follows_wave_table_and_scale() -> void:
-	var data: SimData = _data()
+	var data: SimData = _data().with_run_overrides({"monster_hp_scale": 1000})
 	var spec: SimSpecs.Monster = data.monster("rustling")
 	assert_eq(WaveDirector.monster_hp(data, spec, 1), 30_000)
 	assert_eq(WaveDirector.monster_hp(data, spec, 10), 70_800)
+	var current: SimData = _data()
+	var scale: int = current.run_value("monster_hp_scale")
+	assert_eq(WaveDirector.monster_hp(current, spec, 1), 30 * 1000 * scale / 1000)
 	var harder: SimData = data.with_run_overrides({"monster_hp_scale": 2000})
 	assert_eq(WaveDirector.monster_hp(harder, spec, 1), 60_000)
 

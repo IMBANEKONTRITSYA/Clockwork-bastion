@@ -68,7 +68,7 @@ rows = [{
 "value": 10
 }, {
 "id": "monster_hp_scale",
-"value": 1000
+"value": 2800
 }, {
 "id": "field_length_x1000",
 "value": 12000

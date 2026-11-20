@@ -55,7 +55,6 @@ jobs:
         if: always()
         run: |
           make fixtures SEEDS=101 GODOT=~/godot/godot
-          make sim RUNS=60 GODOT=~/godot/godot VARIANTS="monster_hp_scale=1000|monster_hp_scale=1600|monster_hp_scale=2200|monster_hp_scale=2800|monster_hp_scale=3500"
 
   server:
     runs-on: ubuntu-latest
