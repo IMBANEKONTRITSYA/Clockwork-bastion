@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="BalanceTable" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://sim/balance_table.gd" id="1_table"]
+
+[resource]
+script = ExtResource("1_table")
+table_name = "monsters"
+columns = PackedStringArray("id", "hp", "speed_x1000", "wall_damage", "nuts", "first_wave", "zigzag_amp_x1000", "zigzag_period_ticks", "boss")
+rows = [{
+"id": "rustling",
+"hp": 30,
+"speed_x1000": 600,
+"wall_damage": 5,
+"nuts": 1,
+"first_wave": 1,
+"zigzag_amp_x1000": 0,
+"zigzag_period_ticks": 0,
+"boss": 0
+}, {
+"id": "squeaker",
+"hp": 15,
+"speed_x1000": 1200,
+"wall_damage": 3,
+"nuts": 1,
+"first_wave": 3,
+"zigzag_amp_x1000": 1000,
+"zigzag_period_ticks": 60,
+"boss": 0
+}, {
+"id": "colossus",
+"hp": 400,
+"speed_x1000": 250,
+"wall_damage": 25,
+"nuts": 10,
+"first_wave": 99,
+"zigzag_amp_x1000": 0,
+"zigzag_period_ticks": 0,
+"boss": 1
+}, {
+"id": "magnetron",
+"hp": 700,
+"speed_x1000": 300,
+"wall_damage": 40,
+"nuts": 20,
+"first_wave": 99,
+"zigzag_amp_x1000": 0,
+"zigzag_period_ticks": 0,
+"boss": 1
+}]

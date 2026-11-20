@@ -1,0 +1,23 @@
+{
+  "name": "clockwork-bastion-server",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Модули Nakama (TypeScript) для «Заводного Бастиона»",
+  "scripts": {
+    "build": "esbuild src/main.ts --bundle --format=esm --target=es2017 --charset=utf8 --outfile=build/index.js && node scripts/check-bundle.mjs",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/jest": "^30.0.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.15.0",
+    "jest": "^30.5.2",
+    "prettier": "^3.10.1",
+    "ts-jest": "^29.4.15",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.73.0"
+  }
+}

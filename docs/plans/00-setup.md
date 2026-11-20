@@ -4,15 +4,15 @@
 Раздел плана: «Стек технологий», «Неделя 1» в `docs/plan/game-plan.md`.
 
 ## Шаги
-- [ ] 1. `git init`, первый коммит с этим набором файлов — тест: `git status` чистый
-- [ ] 2. Проект Godot 4.7.2 в `client/` (портрет 1080×1920, stretch canvas_items, renderer Mobile, предупреждения типизации = ошибка) — тест: `godot --headless --path client --quit` без ошибок
-- [ ] 3. Установить GUT в `client/addons/gut/`, пустой тест `client/tests/test_smoke.gd` — тест: `make test-client`
-- [ ] 4. Папки `client/sim`, `client/game`, `client/meta`, `client/services`, `client/data`, `client/i18n/strings.csv` (ru, en) — тест: проект открывается
-- [ ] 5. `client/sim/rng.gd` (SimRng xorshift32) и `client/sim/version.gd` (`SIM_VERSION := 1`) + тест: одинаковое зерно → одинаковые 1000 чисел — тест: `make test-one T=res://tests/sim/test_rng.gd`
-- [ ] 6. `server/`: package.json (TypeScript strict, eslint, prettier, jest), `docker-compose.yml` (nakama + postgres), `src/main.ts` с RPC `healthcheck` — тест: `make test-server`, `make server-up`
-- [ ] 7. `tools/build_data.py` + `data/balance/gears.csv` с одной строкой — тест: `make data` создаёт `client/data/gears.tres`
-- [ ] 8. `pip install "gdtoolkit==4.*"`, `make lint` зелёный
-- [ ] 9. GitHub-репозиторий, CI зелёный на первом PR
+- [x] 1. `git init`, первый коммит с этим набором файлов — тест: `git status` чистый
+- [x] 2. Проект Godot 4.7.2 в `client/` (портрет 1080×1920, stretch canvas_items, renderer Mobile, предупреждения типизации = ошибка) — тест: `godot --headless --path client --quit` без ошибок
+- [x] 3. Установить GUT в `client/addons/gut/`, пустой тест `client/tests/test_smoke.gd` — тест: `make test-client`
+- [x] 4. Папки `client/sim`, `client/game`, `client/meta`, `client/services`, `client/data`, `client/i18n/strings.csv` (ru, en) — тест: проект открывается
+- [x] 5. `client/sim/rng.gd` (SimRng: xorshift32 на 64-битных int с маской 0xFFFFFFFF, методы `next_int()`, `next_range(lo, hi)`, `chance_permille(p)`) и `client/sim/version.gd` (`SIM_VERSION := 1`) + тест: одинаковое зерно → одинаковые 1000 чисел; эталонные первые 10 чисел для зерна 123456789 записаны в тест — тест: `make test-one T=res://tests/sim/test_rng.gd`
+- [x] 6. `server/`: package.json (TypeScript strict, eslint, prettier, jest), `docker-compose.yml` (nakama + postgres), `src/main.ts` с RPC `healthcheck` — тест: `make test-server`, `make server-up`
+- [x] 7. `tools/build_data.py` + `data/balance/gears.csv` с одной строкой — тест: `make data` создаёт `client/data/gears.tres`
+- [x] 8. `pip install "gdtoolkit==4.*"`, `make lint` зелёный
+- [x] 9. GitHub-репозиторий, CI зелёный на первом PR
 
 ## Затрагиваемые файлы
 `client/**`, `server/**`, `tools/build_data.py`, `data/balance/gears.csv`
@@ -23,3 +23,8 @@
 
 ## Готово, когда
 `make test`, `make lint`, `make data` проходят; CI зелёный; `make server-up` отвечает на `healthcheck`.
+
+## Итог
+- Сделано: проект Godot 4.7.2, GUT 9.6.1, SimRng и SIM_VERSION с тестами, сборка данных, модули Nakama с `healthcheck`, CI зелёный (12 тестов клиента, 5 тестов сервера).
+- Проверено: `make lint`, `make data`, `make test-server`; `make server-up` + вызов `healthcheck` по HTTP вернул `{"status":"ok",...}`; тесты GUT и `make determinism` — в CI (в окружении Claude нет Godot).
+- Отклонения: типы `nakama-runtime` v1.49.0 лежат в `server/types/` (а не в npm), чтобы `npm ci` не зависел от скачивания с GitHub; сборка сервера — esbuild с проверкой бандла.

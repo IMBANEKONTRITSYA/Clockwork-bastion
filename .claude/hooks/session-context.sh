@@ -14,8 +14,11 @@ if [ -f HANDOFF.md ]; then
   echo "## Сейчас в работе (из HANDOFF.md)"
   awk '/^## Сейчас в работе/{f=1;next} /^## /{f=0} f && /^\|/' HANDOFF.md | head -n 10
 fi
-# Активный план: самый свежий файл в docs/plans/ (кроме README)
-latest_plan=$(ls -t docs/plans/*.md 2>/dev/null | grep -v README | head -1)
+# Активный план: первый по номеру план в docs/plans/ с незакрытыми пунктами (кроме README)
+latest_plan=""
+for f in $(ls docs/plans/[0-9]*.md 2>/dev/null | sort); do
+  if grep -q '^- \[ \]' "$f"; then latest_plan="$f"; break; fi
+done
 if [ -n "$latest_plan" ]; then
   echo "- Активный план: $latest_plan (прочитай перед работой, если задача связана с ним)"
   open_tasks=$(grep -c '^- \[ \]' "$latest_plan" 2>/dev/null)

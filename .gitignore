@@ -33,3 +33,6 @@ CLAUDE.local.md
 # Система
 .DS_Store
 Thumbs.db
+
+# Генерируется Godot при импорте
+client/i18n/*.translation

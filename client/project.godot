@@ -1,0 +1,47 @@
+; Engine configuration file.
+; Версия Godot зафиксирована: 4.7.2 (см. CLAUDE.md и .github/workflows/ci.yml).
+
+config_version=5
+
+[application]
+
+config/name="Clockwork Bastion"
+config/description="Заводной Бастион"
+config/version="0.0.1"
+run/main_scene="res://game/battle/battle.tscn"
+config/features=PackedStringArray("4.7", "Mobile")
+
+[debug]
+
+gdscript/warnings/exclude_addons=true
+gdscript/warnings/untyped_declaration=2
+gdscript/warnings/unsafe_property_access=2
+gdscript/warnings/unsafe_method_access=2
+gdscript/warnings/unsafe_cast=1
+gdscript/warnings/unsafe_call_argument=2
+gdscript/warnings/integer_division=0
+
+[display]
+
+window/size/viewport_width=1080
+window/size/viewport_height=1920
+window/size/window_width_override=540
+window/size/window_height_override=960
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep_width"
+window/handheld/orientation=1
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://i18n/strings.ru.translation", "res://i18n/strings.en.translation")
+locale/fallback="ru"
+
+[rendering]
+
+renderer/rendering_method="mobile"
+renderer/rendering_method.mobile="mobile"
+textures/vram_compression/import_etc2_astc=true
